@@ -6,7 +6,6 @@ import {
   aktiverLauf,
   antworten,
   bestaetigungUmschalten,
-  checkUmschalten,
   type Einsatz,
   EinsatzFehler,
   einsatzZusammenfassung,
@@ -18,6 +17,7 @@ import {
   type Kontext,
   neuerEinsatz,
   nichtErfolgreichBeenden,
+  schrittInfo,
   schrittZurueck,
   weiter,
 } from "./einsatz";
@@ -36,29 +36,20 @@ const k: Kontext = {
 /** Beantwortet mehrere Fragen im aktuellen Ablauf. */
 const antworte = (e: Einsatz, ...ids: string[]) => ids.reduce((acc, id) => antworten(acc, variante, id), e);
 
-/** Bis einschließlich Fehleraufnahme mit den angegebenen Fehlerbildern. */
+/** Fehlerbilder wählen (Schritt 1) und weiter zum Funktionstest. */
 function bisFunktionstest(...fehlerbilder: string[]): Einsatz {
   let e = neuerEinsatz(pfad);
-  for (const id of ["werkzeug-demo-1", "werkzeug-demo-2", "messgeraet-demo", "auftrag"])
-    e = checkUmschalten(e, "vorbereitung", id);
-  e = weiter(e, k);
   for (const fb of fehlerbilder) e = fehlerbildUmschalten(e, fb);
   return weiter(e, k);
 }
 
 describe("Einsatzablauf", () => {
-  it("sperrt Weiter, solange Pflichtpunkte offen sind", () => {
+  it("beginnt mit Schritt 1 „Fehlerbild“ und verlangt mindestens ein Fehlerbild", () => {
     const e = neuerEinsatz(pfad);
-    expect(kannWeiter(e, k)).toEqual({ ok: false, grund: "Noch 4 Pflichtpunkt(e) abhaken." });
+    expect(e.schritt.typ).toBe("aufnahme");
+    expect(schrittInfo(e.schritt)).toMatchObject({ nummer: "1", titel: "Fehlerbild" });
+    expect(kannWeiter(e, k)).toEqual({ ok: false, grund: "Mindestens ein Fehlerbild auswählen." });
     expect(() => weiter(e, k)).toThrow(EinsatzFehler);
-  });
-
-  it("verlangt mindestens ein Fehlerbild", () => {
-    let e = neuerEinsatz(pfad);
-    for (const id of ["werkzeug-demo-1", "werkzeug-demo-2", "messgeraet-demo", "auftrag"])
-      e = checkUmschalten(e, "vorbereitung", id);
-    e = weiter(e, k);
-    expect(kannWeiter(e, k).ok).toBe(false);
   });
 
   it("führt vollständig durch Diagnose → Reparatur → Nachtest → Abmeldung", () => {
@@ -191,9 +182,9 @@ describe("Lidl → Zigarettenträger → ITAB: 15-Sekunden-Modus", () => {
   const kItab: Kontext = { ...k, variante: itab };
   const antw = (e: Einsatz, ...ids: string[]) => ids.reduce((acc, id) => antworten(acc, itab, id), e);
 
-  /** Vorbereitung (leer), Fehlerbild wählen, allgemeiner Funktionstest „Nein“. */
+  /** Fehlerbild wählen, allgemeiner Funktionstest „Nein“. */
   function bisDiagnose(): Einsatz {
-    let e = weiter(neuerEinsatz(pfadItab), kItab);
+    let e = neuerEinsatz(pfadItab);
     e = weiter(fehlerbildUmschalten(e, "15-sekunden-modus-nicht-aktiv"), kItab);
     expect(aktiverLauf(e, itab)?.flow.id).toBe("standard-funktionstest");
     return weiter(antw(e, "nein"), kItab);
@@ -230,7 +221,7 @@ describe("Lidl → Zigarettenträger → ITAB: schließt nicht komplett", () => 
   const fb = "schliesst-nicht-komplett";
 
   function bisDiagnose(): Einsatz {
-    let e = weiter(neuerEinsatz(pfadItab), kItab);
+    let e = neuerEinsatz(pfadItab);
     e = weiter(fehlerbildUmschalten(e, fb), kItab); // → Funktionstest
     return weiter(antw(e, "nein"), kItab);
   }
