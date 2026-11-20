@@ -1,0 +1,54 @@
+# Step 3 / Step 5 – Funktionstest (DEMO – nicht fachlich freigegeben)
+typ: funktionstest
+titel: Funktionstest Zigarettenträger NERA
+status: entwurf
+version: 1
+start: betriebsbereit
+
+knoten:
+  - id: betriebsbereit
+    art: frage
+    titel: Ist das System betriebsbereit?
+    inhalt:
+      - typ: hinweis
+        titel: DEMO – nicht fachlich freigegeben
+        text: Platzhalter-Prüfung. Prüfanweisung wird von Exakt-Service erstellt.
+      - typ: bild
+        src: /medien/demo/platzhalter.svg
+        alt: Beispielbild Zigarettenträger
+    antworten:
+      - { label: "Ja", typ: ja, weiter: funktion-ausloesen }
+      - { label: "Nein", typ: nein, weiter: nicht-bestanden }
+
+  - id: funktion-ausloesen
+    art: frage
+    titel: Funktion auslösen – fährt das System vollständig auf?
+    inhalt:
+      - typ: hinweis
+        text: "DEMO: Bewegung und Geräusche beobachten."
+    antworten:
+      - { label: "Ja", typ: ja, weiter: endposition }
+      - { label: "Teilweise", id: teilweise, weiter: teilweise }
+      - { label: "Nein", typ: nein, weiter: nicht-bestanden }
+
+  - id: endposition
+    art: frage
+    titel: Schließt das System vollständig und erreicht die Endposition?
+    antworten:
+      - { label: "Ja", typ: ja, weiter: bestanden }
+      - { label: "Nein", typ: nein, weiter: teilweise }
+
+  - id: bestanden
+    art: ergebnis
+    ergebnis: bestanden
+    titel: Funktionstest bestanden
+
+  - id: teilweise
+    art: ergebnis
+    ergebnis: teilweise
+    titel: Funktion nur teilweise gegeben
+
+  - id: nicht-bestanden
+    art: ergebnis
+    ergebnis: nicht-bestanden
+    titel: Funktionstest nicht bestanden

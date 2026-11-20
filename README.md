@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Exakt-Service Navigator
 
-## Getting Started
+Interaktiver Service- und Diagnoseleitfaden für Techniker von Exakt-Service –
+mit vollständiger Handbuchansicht für den Innendienst.
 
-First, run the development server:
+- **Konzept & Entscheidungen:** [docs/KONZEPT.md](docs/KONZEPT.md)
+- **Inhalte schreiben (Prüfungen, Abläufe):** [docs/INHALTE.md](docs/INHALTE.md)
+
+## Stand
+
+| Phase | Inhalt | Status |
+|---|---|---|
+| 1 | Konzept | ✅ |
+| 2 | Datenschema, Diagnose-Engine, Inhaltsprüfung, Demo-Inhalt NERA | ✅ |
+| 3 | Technikerablauf (Oberfläche) | offen |
+| 4 | Innendienst | offen |
+
+## Installation
+
+Voraussetzung: [Node.js](https://nodejs.org) 22 oder neuer, Git.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/Kevin-Exakt/Exakt-Leitfaden.git
+cd Exakt-Leitfaden
+npm install
+npm run dev          # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Befehle
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Befehl | Zweck |
+|---|---|
+| `npm run dev` | Entwicklungsserver |
+| `npm test` | Tests (Engine, Validierung, Inhalte) |
+| `npm run validate` | Prüft alle Inhalte unter `content/` – zeigt Datei und Stelle jedes Fehlers |
+| `npm run typecheck` | TypeScript-Prüfung |
+| `npm run lint` | Code-Stil |
+| `npm run build` | Produktions-Build (prüft vorher automatisch die Inhalte) |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Aufbau
 
-## Learn More
+```
+app/                 Seiten und Layouts (Next.js App Router)
+src/engine/          Diagnose-Engine – reines TypeScript, unabhängig von der Oberfläche
+src/content/         Datenschema, Laden und Prüfen der Inhalte, Repository
+content/             Fachinhalte als YAML (Kunde → Bereich → System → Hersteller → Abläufe)
+public/medien/       Bilder, PDFs
+scripts/             Hilfsskripte (Inhaltsprüfung)
+docs/                Konzept, Inhaltsanleitung
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Zusammenarbeit
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `main` ist immer lauffähig. Änderungen nur per Pull Request.
+- Branches: `feature/<thema>` für Code, `content/<system>` für Inhalte.
+- Jeder Pull Request wird automatisch geprüft (Tests, Typen, Lint, Inhalte) und auf Vercel als Vorschau gebaut.
+- Fachliche Inhalte werden von der jeweils anderen Person im Pull Request geprüft und freigegeben.
+- Projektkontext für Claude Code steht in [CLAUDE.md](CLAUDE.md).

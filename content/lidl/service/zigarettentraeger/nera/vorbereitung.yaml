@@ -1,0 +1,31 @@
+# Step 1 – Vorbereitung (DEMO – nicht fachlich freigegeben)
+hinweise:
+  - typ: hinweis
+    titel: DEMO – nicht fachlich freigegeben
+    text: Alle Listen sind Platzhalter und werden von Exakt-Service ausgearbeitet.
+
+werkzeug:
+  - id: werkzeug-demo-1
+    name: "DEMO: Werkzeug 1"
+  - id: werkzeug-demo-2
+    name: "DEMO: Werkzeug 2"
+
+messgeraete:
+  - id: messgeraet-demo
+    name: "DEMO: Messgerät"
+
+material:
+  - id: material-demo
+    name: "DEMO: Material"
+    pflicht: false
+
+ersatzteile:
+  - id: ersatzteil-motor-demo
+    name: "DEMO: Ersatzmotor"
+    menge: "1 Stück"
+    hinweis: Nur mitnehmen, wenn laut Auftrag ein Motortausch wahrscheinlich ist.
+    pflicht: false
+
+dokumente:
+  - id: auftrag
+    name: "DEMO: Serviceauftrag"

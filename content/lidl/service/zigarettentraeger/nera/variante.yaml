@@ -1,0 +1,23 @@
+# Lidl → Service → Zigarettenträger → NERA
+# DEMO-INHALT: Struktur ist echt, fachliche Inhalte sind Platzhalter.
+hersteller: nera
+status: entwurf
+beschreibung: Pilot-System für den Service Navigator.
+
+funktionstest: funktionstest   # Step 3
+nachtest: funktionstest        # Step 5 (nach der Reparatur)
+
+# Step 2.1 – Fehlerbilder (Mehrfachauswahl möglich)
+fehlerbilder:
+  - id: faehrt-nicht-auf
+    titel: Fährt nicht auf
+    diagnose: faehrt-nicht-auf
+  - id: faehrt-nicht-richtig-zu
+    titel: Fährt nicht richtig zu
+    # noch kein Diagnoseablauf hinterlegt
+  - id: geraeusche
+    titel: Macht Geräusche
+    # noch kein Diagnoseablauf hinterlegt
+  - id: schliesst-nicht-vollstaendig
+    titel: Schließt nicht vollständig
+    rueckwaerts: schliesst-nicht-vollstaendig
