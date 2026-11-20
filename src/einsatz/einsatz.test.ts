@@ -21,7 +21,7 @@ import {
   schrittZurueck,
   weiter,
 } from "./einsatz";
-import { EngineFehler } from "../engine/run";
+import { EngineFehler, stand } from "../engine/run";
 
 const pfad = { auftraggeber: "pan-oston", kunde: "lidl", system: "zigarettentraeger", variante: "nera" };
 const repo = createRepository(loadContent(path.join(process.cwd(), "content")).tree);
@@ -225,5 +225,46 @@ describe("Lidl → Zigarettenträger → ITAB: 15-Sekunden-Modus", () => {
     expect(behoben.fehlerbildStatus["15-sekunden-modus-nicht-aktiv"]).toBe("behoben");
     const eskaliert = weiter(antw(e, "schliesst-weiterhin-nicht"), kItab);
     expect(eskaliert.fehlerbildStatus["15-sekunden-modus-nicht-aktiv"]).toBe("eskaliert");
+  });
+});
+
+describe("Lidl → Zigarettenträger → ITAB: schließt nicht komplett", () => {
+  const pfadItab = { ...pfad, variante: "itab" };
+  const itab = repo.getVariante(pfadItab)!;
+  const kItab: Kontext = { ...k, variante: itab };
+  const antw = (e: Einsatz, ...ids: string[]) => ids.reduce((acc, id) => antworten(acc, itab, id), e);
+  const fb = "schliesst-nicht-komplett";
+
+  function bisDiagnose(): Einsatz {
+    let e = weiter(neuerEinsatz(pfadItab), kItab);
+    for (const id of kItab.ankunftPflicht) e = checkUmschalten(e, "ankunft", id);
+    e = weiter(e, kItab); // → Fehleraufnahme
+    e = weiter(fehlerbildUmschalten(e, fb), kItab); // → Funktionstest
+    return weiter(antw(e, "nein"), kItab);
+  }
+  const knotenNach = (e: Einsatz) => {
+    const lauf = aktiverLauf(e, itab)!;
+    return lauf.flow.knoten.find((x) => x.id === (stand(lauf.flow, e.laeufe[lauf.slot] ?? []).knoten.id))!.id;
+  };
+
+  it("Metallischer Kontakt → Position anpassen → behoben", () => {
+    const e = antw(bisDiagnose(), "ja", "nein", "ja");
+    expect(knotenNach(e)).toBe("position-anpassen");
+    expect(weiter(antw(e, "schliesst-jetzt"), kItab).fehlerbildStatus[fb]).toBe("behoben");
+  });
+
+  it("Kein Magnet im Rollo → Magnet einsetzen", () => {
+    expect(knotenNach(antw(bisDiagnose(), "ja", "nein", "nein", "nein"))).toBe("magnet-einsetzen");
+  });
+
+  it("Schraubenzieher-Test: Rollo stoppt → Position anpassen, fährt weiter → Magnetschalter tauschen", () => {
+    const e = antw(bisDiagnose(), "ja", "nein", "nein", "ja");
+    expect(knotenNach(antw(e, "rollo-stoppt"))).toBe("position-anpassen");
+    expect(knotenNach(antw(e, "rollo-faehrt-weiter"))).toBe("magnetschalter-tauschen");
+  });
+
+  it("Nicht 10 cm offen bzw. Relais klickt → Innendienst", () => {
+    expect(weiter(antw(bisDiagnose(), "nein"), kItab).fehlerbildStatus[fb]).toBe("eskaliert");
+    expect(weiter(antw(bisDiagnose(), "ja", "ja"), kItab).fehlerbildStatus[fb]).toBe("eskaliert");
   });
 });

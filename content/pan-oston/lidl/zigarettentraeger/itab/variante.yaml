@@ -2,6 +2,7 @@
 # Erster echter Leitfaden – in Arbeit.
 #   ✔ Fehlerbilder (Step 2.1)
 #   ✔ Fehleranalyse „15-Sekunden-Modus nicht aktiv“
+#   ✔ Fehleranalyse „Zigarettenträger schließt nicht komplett“
 #   ☐ Vorbereitung (Werkzeug, Material, Ersatzteile)  → vorbereitung.yaml
 #   ☐ Funktionstest (Step 3 / Step 5)                 → funktionstest/funktionstest.yaml
 #   ☐ Fehleranalyse je Fehlerbild (Step 3.1)          → diagnose/<fehlerbild>.yaml
@@ -17,6 +18,7 @@ fehlerbilder:
     diagnose: 15-sekunden-modus-nicht-aktiv
   - id: schliesst-nicht-komplett
     titel: Zigarettenträger schließt nicht komplett
+    diagnose: schliesst-nicht-komplett
   - id: oeffnet-schliesst-nicht
     titel: Zigarettenträger öffnet bzw. schließt nicht
   - id: rollo-laeuft-schlecht

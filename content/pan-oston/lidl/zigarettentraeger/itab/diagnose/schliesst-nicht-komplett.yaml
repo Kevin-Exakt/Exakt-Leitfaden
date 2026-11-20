@@ -1,0 +1,122 @@
+# Step 3.1 – Fehleranalyse „Zigarettenträger schließt nicht komplett“
+# Pan Oston → Lidl → Zigarettenträger → ITAB
+# Inhalt von Exakt-Service vorgegeben (20.11.2026), noch nicht formal freigegeben.
+typ: diagnose
+titel: Zigarettenträger schließt nicht komplett
+status: entwurf
+version: 1
+start: steht-10-cm-offen
+
+knoten:
+  - id: steht-10-cm-offen
+    art: frage
+    titel: Bleibt der Zigarettenträger ca. 10 cm vor dem Schließen stehen?
+    inhalt:
+      - typ: text
+        text: Zigarettenträger zufahren lassen und beobachten, wo das Rollo stehen bleibt.
+    antworten:
+      - { label: "Ja", typ: ja, weiter: relais-klickt }
+      - { label: "Nein", typ: nein, weiter: eskalation-anderer-fehler }
+
+  - id: relais-klickt
+    art: frage
+    titel: Klickt ein Relais, wenn der Magnet im Rollo den Magnetschalter erreicht?
+    inhalt:
+      - typ: text
+        text: Beim Zufahren genau hinhören. Trifft der Magnet im Rollo den Magnetschalter, ist ein Relais-Klicken zu hören.
+    antworten:
+      - { label: "Ja", typ: ja, weiter: eskalation-relais-klickt }
+      - { label: "Nein", typ: nein, weiter: metallischer-kontakt }
+
+  - id: metallischer-kontakt
+    art: frage
+    titel: Hat der Magnetschalter metallischen Kontakt?
+    inhalt:
+      - typ: warnung
+        titel: Wichtig
+        text: Der Magnetschalter darf keinen metallischen Kontakt haben.
+    antworten:
+      - { label: "Ja", typ: ja, weiter: position-anpassen }
+      - { label: "Nein", typ: nein, weiter: magnet-im-rollo }
+
+  - id: magnet-im-rollo
+    art: frage
+    titel: Befindet sich ein Magnet im Rollo?
+    antworten:
+      - { label: "Ja", typ: ja, weiter: schraubenzieher-test }
+      - { label: "Nein", typ: nein, weiter: magnet-einsetzen }
+
+  - id: schraubenzieher-test
+    art: frage
+    titel: Schraubenzieher-Test – hört das Rollo auf zu schließen?
+    inhalt:
+      - typ: text
+        text: Während das Rollo zufährt, einen Schraubenzieher an den Magnetschalter halten.
+      - typ: hinweis
+        text: Hört das Rollo auf zu schließen, ist der Magnetschalter intakt und muss nur in der Position angepasst werden.
+    antworten:
+      - { label: "Ja, Rollo stoppt", id: rollo-stoppt, typ: ja, weiter: position-anpassen }
+      - { label: "Nein, Rollo fährt weiter", id: rollo-faehrt-weiter, typ: nein, weiter: magnetschalter-tauschen }
+
+  # --- Arbeitsschritte ----------------------------------------------------
+  - id: position-anpassen
+    art: anweisung
+    titel: Position des Magnetschalters anpassen
+    inhalt:
+      - typ: text
+        text: Magnetschalter so ausrichten, dass er keinen metallischen Kontakt hat und der Magnet im Rollo ihn beim Zufahren auslöst.
+    antworten:
+      - { label: "Erledigt – schließt jetzt komplett", id: schliesst-jetzt, weiter: behoben }
+      - { label: "Schließt weiterhin nicht komplett", id: schliesst-weiterhin-nicht, weiter: eskalation }
+
+  - id: magnet-einsetzen
+    art: anweisung
+    titel: Magnet im Rollo einsetzen
+    inhalt:
+      - typ: hinweis
+        titel: Anleitung folgt
+        text: Die Arbeitsschritte zum Einsetzen des Magneten werden noch ergänzt.
+    antworten:
+      - { label: "Erledigt – schließt jetzt komplett", id: schliesst-jetzt, weiter: behoben }
+      - { label: "Schließt weiterhin nicht komplett", id: schliesst-weiterhin-nicht, weiter: eskalation }
+
+  - id: magnetschalter-tauschen
+    art: anweisung
+    titel: Magnetschalter defekt – Magnetschalter tauschen
+    inhalt:
+      - typ: hinweis
+        titel: Anleitung folgt
+        text: Der Reparaturleitfaden zum Tausch des Magnetschalters wird noch ergänzt.
+    antworten:
+      - { label: "Getauscht – schließt jetzt komplett", id: schliesst-jetzt, weiter: behoben }
+      - { label: "Schließt weiterhin nicht komplett", id: schliesst-weiterhin-nicht, weiter: eskalation }
+
+  # --- Ergebnisse -------------------------------------------------------
+  - id: behoben
+    art: ergebnis
+    ergebnis: behoben
+    titel: Zigarettenträger schließt wieder komplett
+
+  - id: eskalation-anderer-fehler
+    art: ergebnis
+    ergebnis: eskalation
+    titel: Innendienst kontaktieren
+    inhalt:
+      - typ: hinweis
+        text: Der Zigarettenträger bleibt nicht ca. 10 cm vor dem Schließen stehen – dieses Fehlerbild ist noch nicht beschrieben.
+
+  - id: eskalation-relais-klickt
+    art: ergebnis
+    ergebnis: eskalation
+    titel: Innendienst kontaktieren
+    inhalt:
+      - typ: hinweis
+        text: Das Relais klickt, der Zigarettenträger schließt aber trotzdem nicht komplett – dieser Fall ist noch nicht beschrieben.
+
+  - id: eskalation
+    art: ergebnis
+    ergebnis: eskalation
+    titel: Innendienst kontaktieren
+    inhalt:
+      - typ: hinweis
+        text: Der Zigarettenträger schließt trotz Prüfung des Magnetschalters nicht komplett. Zusammenfassung an den Innendienst durchgeben.

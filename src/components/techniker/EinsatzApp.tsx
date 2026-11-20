@@ -134,7 +134,7 @@ function EinsatzLauf({ einsatz: e, setzen, variante: v, auftraggeber, bezeichnun
 
   const unterzeile =
     s.typ === "diagnose" || s.typ === "reparatur"
-      ? `${[bezeichnung.system, bezeichnung.hersteller].filter(Boolean).join(" ")} · ${titelFehlerbild(s.fehlerbild)}`
+      ? `${bezeichnung.hersteller || bezeichnung.system} · ${titelFehlerbild(s.fehlerbild)}`
       : [bezeichnung.system, bezeichnung.hersteller].filter(Boolean).join(" · ");
 
   const kopf = (
