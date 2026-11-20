@@ -19,9 +19,9 @@ import { Zusammenfassung } from "./Zusammenfassung";
 
 export type EinsatzAppProps = {
   pfad: E.Einsatz["pfad"];
-  bezeichnung: { kunde: string; system: string; hersteller: string };
+  bezeichnung: { auftraggeber: string; system: string; hersteller: string };
   variante: Variante;
-  kunde: {
+  auftraggeber: {
     links: { abmeldung: string; dokumentation: string };
     ankunft: { hinweise: Block[]; checkliste: ListenEintrag[] };
   };
@@ -38,8 +38,8 @@ export function EinsatzApp(props: EinsatzAppProps) {
 
   const gehoertHierher =
     einsatz &&
+    einsatz.pfad.auftraggeber === pfad.auftraggeber &&
     einsatz.pfad.kunde === pfad.kunde &&
-    einsatz.pfad.bereich === pfad.bereich &&
     einsatz.pfad.system === pfad.system &&
     einsatz.pfad.variante === pfad.variante;
 
@@ -58,7 +58,7 @@ function EinsatzStarten({ bezeichnung, variante, laufender, onStart }: EinsatzAp
     <>
       <main className="flex-1 space-y-5 px-4 py-5">
         <Karte className="space-y-1">
-          <p className="text-sm text-text-leise">{bezeichnung.kunde}</p>
+          <p className="text-sm text-text-leise">{bezeichnung.auftraggeber}</p>
           <h1 className="text-2xl font-bold">{bezeichnung.system}</h1>
           <p className="text-lg">Hersteller: {bezeichnung.hersteller}</p>
           {variante.status === "entwurf" && <div className="pt-2"><EntwurfBadge /></div>}
@@ -89,14 +89,14 @@ function EinsatzStarten({ bezeichnung, variante, laufender, onStart }: EinsatzAp
   );
 }
 
-function EinsatzLauf({ einsatz: e, setzen, variante: v, kunde, bezeichnung, startUrl }: EinsatzAppProps & {
+function EinsatzLauf({ einsatz: e, setzen, variante: v, auftraggeber, bezeichnung, startUrl }: EinsatzAppProps & {
   einsatz: E.Einsatz;
   setzen: (e: E.Einsatz | null) => void;
 }) {
   const router = useRouter();
   const kontext: E.Kontext = {
     variante: v,
-    ankunftPflicht: kunde.ankunft.checkliste.filter((c) => c.pflicht).map((c) => c.id),
+    ankunftPflicht: auftraggeber.ankunft.checkliste.filter((c) => c.pflicht).map((c) => c.id),
   };
   const s = e.schritt;
   const info = E.schrittInfo(s);
@@ -221,8 +221,8 @@ function EinsatzLauf({ einsatz: e, setzen, variante: v, kunde, bezeichnung, star
     case "ankunft":
       inhalt = (
         <AnkunftSchritt
-          hinweise={kunde.ankunft.hinweise}
-          checkliste={kunde.ankunft.checkliste}
+          hinweise={auftraggeber.ankunft.hinweise}
+          checkliste={auftraggeber.ankunft.checkliste}
           an={e.ankunft}
           onUmschalten={(id) => aendern((x) => E.checkUmschalten(x, "ankunft", id))}
         />
@@ -320,7 +320,7 @@ function EinsatzLauf({ einsatz: e, setzen, variante: v, kunde, bezeichnung, star
                 : "Den Auftrag jetzt in der Exakt-Service-Anwendung dokumentieren und abschließen."}
             </p>
             <ButtonExtern
-              href={istAbmeldung ? kunde.links.abmeldung : kunde.links.dokumentation}
+              href={istAbmeldung ? auftraggeber.links.abmeldung : auftraggeber.links.dokumentation}
               variante="sekundaer"
               breit
               icon={<ExternalLink className="size-5" />}

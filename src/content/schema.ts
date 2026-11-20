@@ -178,7 +178,7 @@ export type Flow = z.infer<typeof FlowDateiSchema> & {
 };
 
 /* ------------------------------------------------------------------ */
-/* Hierarchie: Kunde → Servicebereich → System → Variante              */
+/* Hierarchie: Auftraggeber → Kunde → System → Variante              */
 /* ------------------------------------------------------------------ */
 
 export const HerstellerDateiSchema = z.strictObject({
@@ -192,25 +192,25 @@ export const AnkunftSchema = z.strictObject({
 });
 export type Ankunft = z.infer<typeof AnkunftSchema>;
 
-export const KundeDateiSchema = z.strictObject({
+export const AuftraggeberDateiSchema = z.strictObject({
   name: z.string().min(1),
   aktiv: z.boolean().default(true),
   links: z.strictObject({
     abmeldung: z.url(),
     dokumentation: z.url(),
   }),
-  /** Step 2 – gilt für alle Bereiche des Kunden, sofern ein Bereich keine eigene Ankunft festlegt. */
+  /** Step 2 – gilt für alle Kunden des Auftraggeber, sofern ein Kunde keine eigene Ankunft festlegt. */
   ankunft: AnkunftSchema.default({ hinweise: [], checkliste: [] }),
 });
 
 /**
- * Bereich unterhalb eines Kunden – z. B. ein Endkunde (Pan Oston → Lidl)
- * oder ein Servicebereich. Kann eigene Ankunftsvorgaben haben.
+ * Kunde unterhalb eines Auftraggeber – z. B. ein Kunde (Pan Oston → Lidl)
+ * oder ein Kunde. Kann eigene Ankunftsvorgaben haben.
  */
-export const BereichDateiSchema = z.strictObject({
+export const KundeDateiSchema = z.strictObject({
   name: z.string().min(1),
   beschreibung: z.string().optional(),
-  /** Ersetzt die Ankunftsvorgaben des Kunden, z. B. Anmeldung im Lidl-Markt. */
+  /** Ersetzt die Ankunftsvorgaben des Auftraggeber, z. B. Anmeldung im Lidl-Markt. */
   ankunft: AnkunftSchema.optional(),
 });
 
@@ -264,12 +264,12 @@ export type Variante = z.infer<typeof VarianteDateiSchema> & {
 };
 
 export type System = z.infer<typeof SystemDateiSchema> & { id: string; varianten: Variante[] };
-export type Bereich = z.infer<typeof BereichDateiSchema> & { id: string; systeme: System[] };
-export type Kunde = z.infer<typeof KundeDateiSchema> & { id: string; bereiche: Bereich[] };
+export type Kunde = z.infer<typeof KundeDateiSchema> & { id: string; systeme: System[] };
+export type Auftraggeber = z.infer<typeof AuftraggeberDateiSchema> & { id: string; kunden: Kunde[] };
 
 export type ContentTree = {
   hersteller: Hersteller[];
-  kunden: Kunde[];
+  auftraggeber: Auftraggeber[];
 };
 
 /* ------------------------------------------------------------------ */

@@ -4,17 +4,17 @@ import { Kopf } from "@/src/components/ui/Rahmen";
 import { FlowFrei } from "@/src/components/techniker/FlowFrei";
 
 export function generateStaticParams() {
-  return alleVarianten().flatMap(({ kunde, bereich, system, variante, v }) =>
-    Object.keys(v.flows).map((flow) => ({ kunde, bereich, system, variante, flow })),
+  return alleVarianten().flatMap(({ auftraggeber, kunde, system, variante, v }) =>
+    Object.keys(v.flows).map((flow) => ({ auftraggeber, kunde, system, variante, flow })),
   );
 }
 
 export const metadata = { title: "Ablauf" };
 
-export default async function FlowSeite({ params }: PageProps<"/[kunde]/leitfaden/[bereich]/[system]/[variante]/[flow]">) {
+export default async function FlowSeite({ params }: PageProps<"/[auftraggeber]/leitfaden/[kunde]/[system]/[variante]/[flow]">) {
   const p = await params;
   const x = alleVarianten().find(
-    (y) => y.kunde === p.kunde && y.bereich === p.bereich && y.system === p.system && y.variante === p.variante,
+    (y) => y.auftraggeber === p.auftraggeber && y.kunde === p.kunde && y.system === p.system && y.variante === p.variante,
   );
   const flow = x?.v.flows[p.flow];
   if (!x || !flow) notFound();
@@ -28,7 +28,7 @@ export default async function FlowSeite({ params }: PageProps<"/[kunde]/leitfade
       <Kopf
         titel={flow.titel}
         unterzeile={`${x.systemName} · ${x.herstellerName} · Nachschlagen`}
-        zurueck={`/${p.kunde}/leitfaden/${p.bereich}/${p.system}/${p.variante}`}
+        zurueck={`/${p.auftraggeber}/leitfaden/${p.kunde}/${p.system}/${p.variante}`}
       />
       <FlowFrei flow={flow} namen={namen} />
     </div>

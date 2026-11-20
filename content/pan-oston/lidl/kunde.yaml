@@ -1,7 +1,7 @@
 # Pan Oston → Lidl
 name: Lidl
 
-# Step 2 – Ankunft / Anmeldung im Lidl-Markt (ersetzt die Vorgaben des Kunden)
+# Step 2 – Ankunft / Anmeldung im Lidl-Markt (ersetzt die Vorgaben des Auftraggebers)
 ankunft:
   hinweise:
     - typ: hinweis

@@ -20,14 +20,14 @@ const GRUPPEN: { typ: FlowTyp; titel: string }[] = [
   { typ: "reparatur", titel: "Reparaturleitfäden" },
 ];
 
-export default async function VariantenLeitfaden({ params }: PageProps<"/[kunde]/leitfaden/[bereich]/[system]/[variante]">) {
+export default async function VariantenLeitfaden({ params }: PageProps<"/[auftraggeber]/leitfaden/[kunde]/[system]/[variante]">) {
   const p = await params;
   const x = alleVarianten().find(
-    (y) => y.kunde === p.kunde && y.bereich === p.bereich && y.system === p.system && y.variante === p.variante,
+    (y) => y.auftraggeber === p.auftraggeber && y.kunde === p.kunde && y.system === p.system && y.variante === p.variante,
   );
   if (!x) notFound();
   const { v } = x;
-  const basis = `/${p.kunde}/leitfaden/${p.bereich}/${p.system}/${p.variante}`;
+  const basis = `/${p.auftraggeber}/leitfaden/${p.kunde}/${p.system}/${p.variante}`;
   const flows = Object.values(v.flows);
   const listen = [
     ["Werkzeug", v.vorbereitung.werkzeug],
@@ -38,7 +38,7 @@ export default async function VariantenLeitfaden({ params }: PageProps<"/[kunde]
   ] as const;
 
   return (
-    <Seite kopf={<Kopf titel={`${x.systemName} · ${x.herstellerName}`} unterzeile="Leitfaden" zurueck={`/${p.kunde}/leitfaden`} />}>
+    <Seite kopf={<Kopf titel={`${x.systemName} · ${x.herstellerName}`} unterzeile="Leitfaden" zurueck={`/${p.auftraggeber}/leitfaden`} />}>
       {v.status === "entwurf" && <EntwurfBadge />}
 
       {GRUPPEN.map((g) => {

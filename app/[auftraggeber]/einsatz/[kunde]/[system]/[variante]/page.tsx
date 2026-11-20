@@ -9,26 +9,26 @@ export function generateStaticParams() {
 
 export const metadata = { title: "Einsatz" };
 
-export default async function EinsatzSeite({ params }: PageProps<"/[kunde]/einsatz/[bereich]/[system]/[variante]">) {
+export default async function EinsatzSeite({ params }: PageProps<"/[auftraggeber]/einsatz/[kunde]/[system]/[variante]">) {
   const p = await params;
   const eintrag = alleVarianten().find(
-    (x) => x.kunde === p.kunde && x.bereich === p.bereich && x.system === p.system && x.variante === p.variante,
+    (x) => x.auftraggeber === p.auftraggeber && x.kunde === p.kunde && x.system === p.system && x.variante === p.variante,
   );
-  const kunde = getRepository().getKunde(p.kunde);
-  if (!eintrag || !kunde) notFound();
+  const auftraggeber = getRepository().getAuftraggeber(p.auftraggeber);
+  if (!eintrag || !auftraggeber) notFound();
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-xl flex-col">
       <EinsatzApp
-        pfad={{ kunde: p.kunde, bereich: p.bereich, system: p.system, variante: p.variante }}
+        pfad={{ auftraggeber: p.auftraggeber, kunde: p.kunde, system: p.system, variante: p.variante }}
         bezeichnung={{
-          kunde: `${kunde.name} · ${eintrag.bereichName}`,
+          auftraggeber: `${auftraggeber.name} · ${eintrag.kundeName}`,
           system: eintrag.systemName,
           hersteller: eintrag.herstellerName,
         }}
         variante={eintrag.v}
-        kunde={{ links: kunde.links, ankunft: eintrag.ankunft }}
-        startUrl={`/${kunde.id}`}
+        auftraggeber={{ links: auftraggeber.links, ankunft: eintrag.ankunft }}
+        startUrl={`/${auftraggeber.id}`}
       />
     </div>
   );

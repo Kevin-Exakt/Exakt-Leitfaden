@@ -1,32 +1,32 @@
 import Link from "next/link";
 import { ChevronRight, Inbox } from "lucide-react";
-import type { Kunde } from "@/src/content/schema";
+import type { Auftraggeber } from "@/src/content/schema";
 import { getRepository } from "@/src/content/repository";
 import { EntwurfBadge } from "../ui/Karte";
 
-/** Liste Bereich → System → Hersteller; verlinkt auf `${basis}/${bereich}/${system}/${variante}`. */
-export function VariantenAuswahl({ kunde, basis }: { kunde: Kunde; basis: string }) {
+/** Liste Kunde → System → Hersteller; verlinkt auf `${basis}/${kunde}/${system}/${variante}`. */
+export function VariantenAuswahl({ auftraggeber, basis }: { auftraggeber: Auftraggeber; basis: string }) {
   const repo = getRepository();
-  const bereiche = kunde.bereiche.filter((b) => b.systeme.length > 0);
+  const kunden = auftraggeber.kunden.filter((b) => b.systeme.length > 0);
 
-  if (!bereiche.length)
+  if (!kunden.length)
     return (
       <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-slate-300 bg-karte p-8 text-center text-text-leise">
         <Inbox className="size-10" aria-hidden />
-        <p>Für {kunde.name} sind noch keine Systeme hinterlegt.</p>
+        <p>Für {auftraggeber.name} sind noch keine Systeme hinterlegt.</p>
       </div>
     );
 
   return (
     <div className="space-y-8">
-      {bereiche.map((b) => (
+      {kunden.map((b) => (
         <section key={b.id} className="space-y-4">
-          {/* Bereichsüberschrift nur, wenn es mehrere Bereiche gibt */}
-          {bereiche.length > 1 && <h2 className="text-sm font-semibold uppercase tracking-wide text-text-leise">{b.name}</h2>}
+          {/* Kundenüberschrift nur, wenn es mehrere Kunden gibt */}
+          {kunden.length > 1 && <h2 className="text-sm font-semibold uppercase tracking-wide text-text-leise">{b.name}</h2>}
           {b.systeme.map((s) => (
             <div key={s.id} className="space-y-2">
               <h3 className="text-xl font-bold">
-                {bereiche.length === 1 && <span className="font-normal text-text-leise">{b.name} · </span>}
+                {kunden.length === 1 && <span className="font-normal text-text-leise">{b.name} · </span>}
                 {s.name}
               </h3>
               <p className="text-sm text-text-leise">Hersteller auswählen</p>

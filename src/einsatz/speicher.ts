@@ -6,7 +6,7 @@
 import { useCallback, useSyncExternalStore } from "react";
 import type { Einsatz } from "./einsatz";
 
-const SCHLUESSEL = "exakt.einsatz.v1";
+const SCHLUESSEL = "exakt.einsatz.v2";
 const hoerer = new Set<() => void>();
 
 let zwischenspeicher: { roh: string | null; wert: Einsatz | null } = { roh: null, wert: null };
@@ -22,7 +22,7 @@ function lesen(): Einsatz | null {
   let wert: Einsatz | null = null;
   try {
     const daten = roh ? JSON.parse(roh) : null;
-    wert = daten?.version === 1 ? (daten as Einsatz) : null;
+    wert = daten?.version === 2 ? (daten as Einsatz) : null;
   } catch {
     wert = null;
   }

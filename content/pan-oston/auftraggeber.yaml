@@ -1,5 +1,5 @@
-# Kunde Pan Oston – Vorgaben für alle Pan-Oston-Einsätze.
-# Endkunden (z. B. Lidl) liegen als Unterordner darunter.
+# Auftraggeber Pan Oston – Vorgaben für alle Pan-Oston-Einsätze.
+# Kunden (z. B. Lidl) liegen als Unterordner darunter.
 name: Pan Oston
 aktiv: true
 

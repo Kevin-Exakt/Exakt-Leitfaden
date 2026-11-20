@@ -11,11 +11,11 @@ Im Pull Request läuft sie automatisch.
 ```
 content/
 ├─ hersteller.yaml                         alle Hersteller (ITAB, NERA, Kesseböhmer …)
-├─ instaserve/ iris/ retec/ rowius/       weitere Kunden (je eine kunde.yaml)
-└─ pan-oston/                              Kunde (Ordnername = ID)
-   ├─ kunde.yaml                           Name, Links Abmeldung/Doku, optional Ankunft
-   └─ lidl/                                Bereich, z. B. Endkunde des Kunden
-      ├─ bereich.yaml                      Name, optional eigene Ankunft-Checkliste
+├─ instaserve/ iris/ retec/ rowius/       weitere Auftraggeber (je eine auftraggeber.yaml)
+└─ pan-oston/                              Auftraggeber (Ordnername = ID)
+   ├─ auftraggeber.yaml                    Name, Links Abmeldung/Doku, optional Ankunft
+   └─ lidl/                                Kunde des Auftraggebers
+      ├─ kunde.yaml                        Name, optional eigene Ankunft-Checkliste
       └─ zigarettentraeger/                System
          ├─ system.yaml
          └─ nera/                          Hersteller-Variante
@@ -30,11 +30,13 @@ content/
 **IDs** (Ordner, Dateinamen, `id:`-Felder): nur Kleinbuchstaben, Ziffern, Bindestriche.
 Umlaute ausschreiben: `faehrt-nicht-auf`, `kessebohmer`.
 
-**Neuen Kunden anlegen:** Ordner unter `content/` mit `kunde.yaml` (`name`, `links`).
-Erscheint sofort in der Kundenauswahl.
+**Neuen Auftraggeber anlegen:** Ordner unter `content/` mit `auftraggeber.yaml` (`name`, `links`).
+Erscheint sofort in der Auftraggeber-Auswahl.
 
-**Ankunft (Step 2):** Steht `ankunft:` in `bereich.yaml`, gilt sie für diesen Bereich
-(z. B. Anmeldung im Lidl-Markt). Sonst gilt `ankunft:` aus `kunde.yaml`.
+**Neuen Kunden anlegen:** Ordner unter dem Auftraggeber mit `kunde.yaml` (`name`).
+
+**Ankunft (Step 2):** Steht `ankunft:` in `kunde.yaml`, gilt sie für diesen Kunden
+(z. B. Anmeldung im Lidl-Markt). Sonst gilt `ankunft:` aus `auftraggeber.yaml`.
 
 **Neuen Hersteller anlegen:** Ordner `nera/` kopieren, umbenennen (z. B. `itab/`),
 `hersteller:` in `variante.yaml` anpassen, Inhalte ersetzen.

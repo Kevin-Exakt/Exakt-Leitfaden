@@ -33,9 +33,10 @@ export type Schritt =
 export type FehlerbildStatus = "offen" | "repariert" | "behoben" | "eskaliert" | "nicht-mehr-vorhanden";
 
 export type Einsatz = {
-  version: 1;
+  /** 2 = Pfad mit auftraggeber/kunde (statt kunde/bereich). */
+  version: 2;
   id: string;
-  pfad: { kunde: string; bereich: string; system: string; variante: string };
+  pfad: { auftraggeber: string; kunde: string; system: string; variante: string };
   gestartetAm: string;
   schritt: Schritt;
   /** Vorherige Schritte – für „Zurück“. */
@@ -66,7 +67,7 @@ export class EinsatzFehler extends Error {}
 
 export function neuerEinsatz(pfad: Einsatz["pfad"], jetzt = new Date()): Einsatz {
   return {
-    version: 1,
+    version: 2,
     id: `${jetzt.getTime().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
     pfad,
     gestartetAm: jetzt.toISOString(),
@@ -200,7 +201,7 @@ export function notizSetzen(e: Einsatz, notiz: string): Einsatz {
 
 export type Kontext = {
   variante: Variante;
-  /** Pflicht-IDs der Ankunft-Checkliste (kundenabhängig). */
+  /** Pflicht-IDs der Ankunft-Checkliste (auftraggeberabhängig). */
   ankunftPflicht: string[];
 };
 
@@ -425,7 +426,7 @@ export function schrittInfo(s: Schritt) {
 export function einsatzZusammenfassung(e: Einsatz, v: Variante): string {
   const titel = (id: string) => v.fehlerbilder.find((f) => f.id === id)?.titel ?? id;
   const zeilen = [
-    `Einsatz ${e.pfad.kunde} / ${e.pfad.system} / ${e.pfad.variante}`,
+    `Einsatz ${e.pfad.auftraggeber} / ${e.pfad.system} / ${e.pfad.variante}`,
     `Schritt: ${schrittInfo(e.schritt).nummer} ${schrittInfo(e.schritt).titel}`,
     `Fehlerbilder: ${e.fehlerbilder.map((id) => `${titel(id)} (${e.fehlerbildStatus[id] ?? "offen"})`).join(", ") || "–"}`,
   ];

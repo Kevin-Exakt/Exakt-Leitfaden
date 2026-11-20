@@ -24,14 +24,14 @@ const warnungen = probleme.filter((p) => p.schwere === "warnung");
 for (const p of fehler) console.error(`✖ FEHLER   ${p.ort}\n           ${p.meldung}`);
 for (const p of warnungen) console.warn(`⚠ WARNUNG  ${p.ort}\n           ${p.meldung}`);
 
-const anzahlFlows = tree.kunden
-  .flatMap((k) => k.bereiche)
+const anzahlFlows = tree.auftraggeber
+  .flatMap((k) => k.kunden)
   .flatMap((b) => b.systeme)
   .flatMap((s) => s.varianten)
   .reduce((n, v) => n + Object.keys(v.flows).length, 0);
 
 console.log(
-  `\nInhalte geprüft: ${tree.kunden.length} Kunde(n), ${anzahlFlows} Abläufe – ` +
+  `\nInhalte geprüft: ${tree.auftraggeber.length} Auftraggeber, ${anzahlFlows} Abläufe – ` +
     `${fehler.length} Fehler, ${warnungen.length} Warnungen.`,
 );
 process.exit(fehler.length ? 1 : 0);

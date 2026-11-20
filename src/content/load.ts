@@ -4,12 +4,12 @@
  * Ordnerstruktur (IDs = Ordner-/Dateinamen):
  *
  *   content/hersteller.yaml
- *   content/<kunde>/kunde.yaml
- *   content/<kunde>/<bereich>/bereich.yaml
- *   content/<kunde>/<bereich>/<system>/system.yaml
- *   content/<kunde>/<bereich>/<system>/<variante>/variante.yaml
- *   content/<kunde>/<bereich>/<system>/<variante>/vorbereitung.yaml
- *   content/<kunde>/<bereich>/<system>/<variante>/<unterordner>/<ablauf>.yaml   (beliebige Unterordner)
+ *   content/<auftraggeber>/auftraggeber.yaml
+ *   content/<auftraggeber>/<kunde>/kunde.yaml
+ *   content/<auftraggeber>/<kunde>/<system>/system.yaml
+ *   content/<auftraggeber>/<kunde>/<system>/<variante>/variante.yaml
+ *   content/<auftraggeber>/<kunde>/<system>/<variante>/vorbereitung.yaml
+ *   content/<auftraggeber>/<kunde>/<system>/<variante>/<unterordner>/<ablauf>.yaml   (beliebige Unterordner)
  *
  * Fehler werden gesammelt statt sofort abzubrechen, damit man alle Probleme auf einmal sieht.
  * Nur serverseitig verwenden (Dateisystem).
@@ -19,13 +19,13 @@ import path from "node:path";
 import { parse as parseYaml } from "yaml";
 import { z } from "zod";
 import {
-  BereichDateiSchema,
+  KundeDateiSchema,
   type ContentTree,
   type Flow,
   FlowDateiSchema,
   HerstellerDateiSchema,
   IdSchema,
-  KundeDateiSchema,
+  AuftraggeberDateiSchema,
   SystemDateiSchema,
   type Variante,
   VarianteDateiSchema,
@@ -115,14 +115,14 @@ export function loadContent(contentDir: string): LadeErgebnis {
 
   const hersteller = lies(path.join(contentDir, "hersteller.yaml"), HerstellerDateiSchema)?.hersteller ?? [];
 
-  const kunden: ContentTree["kunden"] = [];
-  for (const kundeId of ordner(contentDir)) {
-    const kDir = path.join(contentDir, kundeId);
-    const kunde = lies(path.join(kDir, "kunde.yaml"), KundeDateiSchema);
-    const bereiche = [];
-    for (const bereichId of ordner(kDir)) {
-      const bDir = path.join(kDir, bereichId);
-      const bereich = lies(path.join(bDir, "bereich.yaml"), BereichDateiSchema);
+  const alleAuftraggeber: ContentTree["auftraggeber"] = [];
+  for (const auftraggeberId of ordner(contentDir)) {
+    const kDir = path.join(contentDir, auftraggeberId);
+    const auftraggeber = lies(path.join(kDir, "auftraggeber.yaml"), AuftraggeberDateiSchema);
+    const kunden = [];
+    for (const kundeId of ordner(kDir)) {
+      const bDir = path.join(kDir, kundeId);
+      const kunde = lies(path.join(bDir, "kunde.yaml"), KundeDateiSchema);
       const systeme = [];
       for (const systemId of ordner(bDir)) {
         const sDir = path.join(bDir, systemId);
@@ -132,10 +132,10 @@ export function loadContent(contentDir: string): LadeErgebnis {
           .filter((v): v is Variante => v !== null);
         if (system) systeme.push({ ...system, id: systemId, varianten });
       }
-      if (bereich) bereiche.push({ ...bereich, id: bereichId, systeme });
+      if (kunde) kunden.push({ ...kunde, id: kundeId, systeme });
     }
-    if (kunde) kunden.push({ ...kunde, id: kundeId, bereiche });
+    if (auftraggeber) alleAuftraggeber.push({ ...auftraggeber, id: auftraggeberId, kunden });
   }
 
-  return { tree: { hersteller, kunden }, probleme };
+  return { tree: { hersteller, auftraggeber: alleAuftraggeber }, probleme };
 }

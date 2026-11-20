@@ -6,19 +6,19 @@ import { getRepository } from "./repository";
 
 export function alleVarianten() {
   const repo = getRepository();
-  return repo.getKunden().flatMap((k) =>
-    k.bereiche.flatMap((b) =>
+  return repo.getAlleAuftraggeber().flatMap((k) =>
+    k.kunden.flatMap((b) =>
       b.systeme.flatMap((s) =>
         s.varianten.map((v) => ({
-          kunde: k.id,
-          bereich: b.id,
+          auftraggeber: k.id,
+          kunde: b.id,
           system: s.id,
           variante: v.id,
-          kundeName: k.name,
-          bereichName: b.name,
+          auftraggeberName: k.name,
+          kundeName: b.name,
           systemName: s.name,
           herstellerName: repo.getHersteller(v.hersteller)?.name ?? v.hersteller,
-          /** Ankunftsvorgaben: Bereich (z. B. Lidl) vor Kunde. */
+          /** Ankunftsvorgaben: Kunde (z. B. Lidl) vor Auftraggeber. */
           ankunft: b.ankunft ?? k.ankunft,
           v,
         })),
@@ -28,20 +28,20 @@ export function alleVarianten() {
 }
 
 export function variantenParams() {
-  return alleVarianten().map(({ kunde, bereich, system, variante }) => ({ kunde, bereich, system, variante }));
+  return alleVarianten().map(({ auftraggeber, kunde, system, variante }) => ({ auftraggeber, kunde, system, variante }));
 }
 
-export function kundenParams() {
+export function auftraggeberParams() {
   return getRepository()
-    .getKunden()
-    .map((k) => ({ kunde: k.id }));
+    .getAlleAuftraggeber()
+    .map((k) => ({ auftraggeber: k.id }));
 }
 
-/** "bereich/system/variante" → "Zigarettenträger · NERA" */
-export function variantenNamen(kunde: string): Record<string, string> {
+/** "kunde/system/variante" → "Zigarettenträger · NERA" */
+export function variantenNamen(auftraggeber: string): Record<string, string> {
   return Object.fromEntries(
     alleVarianten()
-      .filter((x) => x.kunde === kunde)
-      .map((x) => [`${x.bereich}/${x.system}/${x.variante}`, `${x.systemName} · ${x.herstellerName}`]),
+      .filter((x) => x.auftraggeber === auftraggeber)
+      .map((x) => [`${x.kunde}/${x.system}/${x.variante}`, `${x.systemName} · ${x.herstellerName}`]),
   );
 }
