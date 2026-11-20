@@ -29,7 +29,7 @@ export function validateContent(tree: ContentTree, optionen: ValidierungsOptione
       for (const system of kunde.systeme)
         for (const variante of system.varianten) {
           const basis = `${auftraggeber.id}/${kunde.id}/${system.id}/${variante.id}`;
-          if (!herstellerIds.has(variante.hersteller))
+          if (variante.hersteller && !herstellerIds.has(variante.hersteller))
             probleme.push({
               schwere: "fehler",
               ort: `${basis}/variante.yaml`,

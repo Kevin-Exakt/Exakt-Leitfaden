@@ -17,7 +17,9 @@ export function alleVarianten() {
           auftraggeberName: k.name,
           kundeName: b.name,
           systemName: s.name,
-          herstellerName: v.name ?? repo.getHersteller(v.hersteller)?.name ?? v.hersteller,
+          herstellerName: v.name ?? (v.hersteller ? (repo.getHersteller(v.hersteller)?.name ?? v.hersteller) : undefined),
+          /** „Zigarettenträger · NERA“ bzw. nur „EAS RF“ bei Systemen ohne Hersteller. */
+          titel: [s.name, v.name ?? (v.hersteller ? (repo.getHersteller(v.hersteller)?.name ?? v.hersteller) : undefined)].filter(Boolean).join(" · "),
           /** Ankunftsvorgaben: Kunde (z. B. Lidl) vor Auftraggeber. */
           ankunft: b.ankunft ?? k.ankunft,
           v,
@@ -55,6 +57,6 @@ export function variantenNamen(auftraggeber: string): Record<string, string> {
   return Object.fromEntries(
     alleVarianten()
       .filter((x) => x.auftraggeber === auftraggeber)
-      .map((x) => [`${x.kunde}/${x.system}/${x.variante}`, `${x.systemName} · ${x.herstellerName}`]),
+      .map((x) => [`${x.kunde}/${x.system}/${x.variante}`, x.titel]),
   );
 }
