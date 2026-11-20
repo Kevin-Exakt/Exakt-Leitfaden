@@ -69,7 +69,7 @@ describe("Laden & Querverweise", () => {
     );
   });
 
-  it("erlaubt Hersteller ohne Leitfaden, aber keine Fehlerbilder ohne Funktionstest", () => {
+  it("erlaubt Hersteller ohne Leitfaden und warnt bei Fehlerbildern ohne eigenen Funktionstest", () => {
     const ohne = loadContent(tempContent({ ...minimal, "k/b/s/v/variante.yaml": "hersteller: nera\nstatus: entwurf\n" }));
     expect(ohne.probleme).toEqual([]);
     expect(ohne.tree.auftraggeber[0].kunden[0].systeme[0].varianten[0].vorbereitung.werkzeug).toEqual([]);
@@ -77,8 +77,8 @@ describe("Laden & Querverweise", () => {
     const halb = loadContent(
       tempContent({ ...minimal, "k/b/s/v/variante.yaml": "hersteller: nera\nstatus: entwurf\nfehlerbilder: [{ id: f, titel: F }]\n" }),
     );
-    expect(validateContent(halb.tree).map((p) => p.meldung)).toEqual(
-      expect.arrayContaining([expect.stringContaining("kein \"funktionstest\"")]),
+    expect(validateContent(halb.tree).filter((p) => p.schwere === "warnung").map((p) => p.meldung)).toEqual(
+      expect.arrayContaining([expect.stringContaining("kein eigener \"funktionstest\"")]),
     );
   });
 

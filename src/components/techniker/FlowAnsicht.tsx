@@ -136,7 +136,7 @@ function AntwortButton({ antwort, gesperrt, onClick }: { antwort: Antwort; gespe
 }
 
 function ergebnisRahmen(e?: string) {
-  if (e === "bestanden" || e === "behoben" || e === "abgeschlossen") return "border-ok bg-ok-hell";
+  if (e === "bestanden" || e === "behoben" || e === "abgeschlossen" || e === "in-ordnung") return "border-ok bg-ok-hell";
   if (e === "eskalation" || e === "nicht-bestanden") return "border-red-300 bg-sicherheit-hell";
   return "border-akzent bg-akzent-hell";
 }

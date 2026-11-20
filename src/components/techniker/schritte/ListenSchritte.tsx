@@ -41,6 +41,9 @@ export function VorbereitungSchritt({ vorbereitung: vb, an, onUmschalten, fehler
   return (
     <>
       <p className="text-text-leise">Vor der Abfahrt prüfen, ob alles dabei ist.</p>
+      {[vb.werkzeug, vb.messgeraete, vb.material, vb.ersatzteile, vb.dokumente].every((l) => l.length === 0) && (
+        <Bloecke bloecke={[{ typ: "hinweis", titel: "Noch keine Vorbereitungsliste", text: "Für dieses System sind Werkzeug, Material und Ersatzteile noch nicht hinterlegt." }]} />
+      )}
       <Bloecke bloecke={vb.hinweise} />
       <Liste titel="Werkzeug" eintraege={vb.werkzeug} an={an} onUmschalten={onUmschalten} />
       <Liste titel="Messgeräte" eintraege={vb.messgeraete} an={an} onUmschalten={onUmschalten} />

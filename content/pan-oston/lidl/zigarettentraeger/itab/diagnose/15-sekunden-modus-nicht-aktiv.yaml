@@ -1,0 +1,64 @@
+# Step 3.1 – Fehleranalyse „15-Sekunden-Modus nicht aktiv“
+# Pan Oston → Lidl → Zigarettenträger → ITAB
+# Inhalt von Exakt-Service vorgegeben (20.11.2026), noch nicht formal freigegeben.
+typ: diagnose
+titel: 15-Sekunden-Modus nicht aktiv
+status: entwurf
+version: 1
+start: schliesst-nach-15-sekunden
+
+knoten:
+  - id: schliesst-nach-15-sekunden
+    art: frage
+    titel: Schließt der Zigarettenträger nach 15 Sekunden von alleine?
+    inhalt:
+      - typ: text
+        text: Zigarettenträger öffnen und ohne weitere Bedienung 15 Sekunden warten.
+    antworten:
+      - { label: "Ja", typ: ja, weiter: in-ordnung }
+      - { label: "Nein", typ: nein, weiter: instore-communication }
+
+  - id: instore-communication
+    art: frage
+    titel: Ist ein Instore-Communication-System verbaut?
+    antworten:
+      - { label: "Ja", typ: ja, weiter: nicht-moeglich-instore }
+      - { label: "Nein", typ: nein, weiter: dip-schalter }
+
+  - id: dip-schalter
+    art: anweisung
+    titel: DIP-Schalter prüfen
+    inhalt:
+      - typ: hinweis
+        titel: Anleitung folgt
+        text: Die genaue Stellung der DIP-Schalter für den 15-Sekunden-Modus wird noch ergänzt.
+    antworten:
+      - { label: "Schließt jetzt nach 15 Sekunden von alleine", id: schliesst-jetzt, weiter: behoben }
+      - { label: "Schließt weiterhin nicht", id: schliesst-weiterhin-nicht, weiter: eskalation }
+
+  # --- Ergebnisse -------------------------------------------------------
+  - id: in-ordnung
+    art: ergebnis
+    ergebnis: in-ordnung
+    titel: 15-Sekunden-Modus in Ordnung
+
+  - id: nicht-moeglich-instore
+    art: ergebnis
+    ergebnis: in-ordnung
+    titel: Kein Fehler – mit Instore Communication ist der 15-Sekunden-Modus nicht möglich
+    inhalt:
+      - typ: hinweis
+        text: Ist ein Instore-Communication-System verbaut, gibt es keinen 15-Sekunden-Modus. Keine Reparatur nötig.
+
+  - id: behoben
+    art: ergebnis
+    ergebnis: behoben
+    titel: 15-Sekunden-Modus über DIP-Schalter wiederhergestellt
+
+  - id: eskalation
+    art: ergebnis
+    ergebnis: eskalation
+    titel: Innendienst kontaktieren
+    inhalt:
+      - typ: hinweis
+        text: Der 15-Sekunden-Modus funktioniert trotz DIP-Schalter-Prüfung nicht. Zusammenfassung an den Innendienst durchgeben.

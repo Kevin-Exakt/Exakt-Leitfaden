@@ -11,6 +11,7 @@
  *    oder nach bewusstem Abschluss „nicht erfolgreich“.
  */
 import type { ErgebnisTyp, Flow, Variante } from "../content/schema";
+import { STANDARD_FUNKTIONSTEST } from "./standard";
 import { antworten as engineAntworten, korrigieren, stand, zurueck, zusammenfassung, type Verlauf } from "../engine/run";
 
 /* ------------------------------------------------------------------ */
@@ -98,11 +99,11 @@ export function aktiverLauf(e: Einsatz, v: Variante): { slot: string; flow: Flow
   switch (s.typ) {
     case "funktionstest":
       slot = "funktionstest";
-      flow = holen(v.funktionstest);
+      flow = holen(v.funktionstest) ?? STANDARD_FUNKTIONSTEST;
       break;
     case "nachtest":
       slot = "nachtest";
-      flow = holen(v.nachtest ?? v.funktionstest);
+      flow = holen(v.nachtest ?? v.funktionstest) ?? STANDARD_FUNKTIONSTEST;
       break;
     case "diagnose": {
       const fb = v.fehlerbilder.find((f) => f.id === s.fehlerbild);
@@ -306,6 +307,9 @@ export function weiter(e: Einsatz, k: Kontext): Einsatz {
           return gehe(e2, { typ: "reparatur", fehlerbild: s.fehlerbild, flow: erg.reparatur! });
         case "behoben":
           return gehe(setzeStatus(e2, s.fehlerbild, "behoben"), { typ: "nachtest" });
+        case "in-ordnung":
+          // Kein Fehler – nächstes Fehlerbild bzw. Nachtest
+          return naechstesFehlerbildOderNachtest(setzeStatus(e2, s.fehlerbild, "nicht-mehr-vorhanden"), v);
         default: // kein-befund, eskalation
           return naechstesFehlerbildOderNachtest(setzeStatus(e2, s.fehlerbild, "eskaliert"), v);
       }

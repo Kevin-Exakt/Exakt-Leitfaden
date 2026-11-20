@@ -134,7 +134,7 @@ function EinsatzLauf({ einsatz: e, setzen, variante: v, auftraggeber, bezeichnun
 
   const unterzeile =
     s.typ === "diagnose" || s.typ === "reparatur"
-      ? `${[bezeichnung.system, bezeichnung.hersteller].filter(Boolean).join(" ")} · ${titelFehlerbild(s.fehlerbild)}`
+      ? `${bezeichnung.hersteller || bezeichnung.system} · ${titelFehlerbild(s.fehlerbild)}`
       : [bezeichnung.system, bezeichnung.hersteller].filter(Boolean).join(" · ");
 
   const kopf = (
@@ -397,7 +397,7 @@ function ErgebnisAktionen({ e, v, ergebnis, zusammenfassung, weiter, aendern }: 
     </Button>
   );
   const weiterLabel = () => {
-    if (s.typ === "diagnose" && (ergebnis.ergebnis === "eskalation" || ergebnis.ergebnis === "kein-befund"))
+    if (s.typ === "diagnose" && ["eskalation", "kein-befund", "in-ordnung"].includes(ergebnis.ergebnis))
       return E.offeneFehlerbilder(e).length > 1 ? "Weiter zum nächsten Fehlerbild" : "Weiter zum Funktionstest";
     return undefined;
   };
@@ -458,6 +458,12 @@ function ErgebnisAktionen({ e, v, ergebnis, zusammenfassung, weiter, aendern }: 
         return (
           <Button variante="primaer" breit onClick={weiter}>
             Weiter zum Funktionstest
+          </Button>
+        );
+      if (ergebnis.ergebnis === "in-ordnung")
+        return (
+          <Button variante="primaer" breit onClick={weiter}>
+            {weiterLabel()}
           </Button>
         );
       return (

@@ -95,6 +95,8 @@ export const ErgebnisTypSchema = z.enum([
   "reparatur",
   "behoben",
   "kein-befund",
+  /** Kein Fehler feststellbar bzw. Verhalten ist so vorgesehen – keine Reparatur nötig. */
+  "in-ordnung",
   // Reparatur
   "abgeschlossen",
   // überall
@@ -274,9 +276,10 @@ export type System = z.infer<typeof SystemDateiSchema> & { id: string; varianten
 export type Kunde = z.infer<typeof KundeDateiSchema> & { id: string; systeme: System[] };
 export type Auftraggeber = z.infer<typeof AuftraggeberDateiSchema> & { id: string; kunden: Kunde[] };
 
-/** Ist für die Variante ein durchführbarer Leitfaden hinterlegt (Funktionstest + mind. ein Fehlerbild)? */
-export function leitfadenVorhanden(v: Pick<Variante, "funktionstest" | "fehlerbilder">): boolean {
-  return Boolean(v.funktionstest) && v.fehlerbilder.length > 0;
+/** Ist für die Variante ein durchführbarer Leitfaden hinterlegt? Mindestens ein Fehlerbild genügt –
+ * ohne eigenen Funktionstest wird der allgemeine verwendet (src/einsatz/standard.ts). */
+export function leitfadenVorhanden(v: Pick<Variante, "fehlerbilder">): boolean {
+  return v.fehlerbilder.length > 0;
 }
 
 export type ContentTree = {
