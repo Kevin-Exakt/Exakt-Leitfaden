@@ -2,12 +2,16 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { getRepository } from "@/src/content/repository";
 import { Kopf, Seite } from "@/src/components/ui/Rahmen";
+import { Schnellsuche } from "@/src/components/techniker/Schnellsuche";
 
 export default function Startseite() {
-  const auftraggeber = getRepository().getAlleAuftraggeber();
+  const repo = getRepository();
+  const auftraggeber = repo.getAlleAuftraggeber();
   return (
-    <Seite kopf={<Kopf titel="Exakt-Service Navigator" unterzeile="Auftraggeber wählen" />}>
+    <Seite kopf={<Kopf titel="Exakt-Service Navigator" unterzeile="Suchen oder Auftraggeber wählen" />}>
+      <Schnellsuche index={repo.getSuchindex()} />
       <div className="space-y-2">
+        <h2 className="pt-2 text-sm font-semibold uppercase tracking-wide text-text-leise">Auftraggeber</h2>
         {auftraggeber.map((k) => (
           <Link
             key={k.id}

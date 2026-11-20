@@ -442,3 +442,14 @@ export function einsatzZusammenfassung(e: Einsatz, v: Variante): string {
   if (lauf && !laufErgebnis(e, v)) zeilen.push(`• ${zusammenfassung(lauf.flow, e.laeufe[lauf.slot] ?? [])}`);
   return zeilen.join("\n");
 }
+
+/**
+ * Neuer Leitfaden mit bereits gewähltem Fehlerbild (z. B. aus der Schnellsuche):
+ * Schritt 1 ist erledigt, es geht direkt beim Funktionstest los. „Zurück“ führt
+ * zur Fehlerbild-Auswahl. Unbekannte Fehlerbilder werden ignoriert.
+ */
+export function neuerEinsatzMitFehlerbild(pfad: Einsatz["pfad"], k: Kontext, fehlerbildId?: string | null): Einsatz {
+  const e = neuerEinsatz(pfad);
+  if (!fehlerbildId || !k.variante.fehlerbilder.some((f) => f.id === fehlerbildId)) return e;
+  return weiter(fehlerbildUmschalten(e, fehlerbildId), k);
+}
