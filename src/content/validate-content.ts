@@ -24,7 +24,8 @@ export function validateContent(tree: ContentTree, optionen: ValidierungsOptione
 
   for (const kunde of tree.kunden) {
     pruefeBloecke(kunde.ankunft.hinweise, `${kunde.id}/kunde.yaml`);
-    for (const bereich of kunde.bereiche)
+    for (const bereich of kunde.bereiche) {
+      if (bereich.ankunft) pruefeBloecke(bereich.ankunft.hinweise, `${kunde.id}/${bereich.id}/bereich.yaml`);
       for (const system of bereich.systeme)
         for (const variante of system.varianten) {
           const basis = `${kunde.id}/${bereich.id}/${system.id}/${variante.id}`;
@@ -36,6 +37,7 @@ export function validateContent(tree: ContentTree, optionen: ValidierungsOptione
             });
           probleme.push(...validateVariante(variante, basis, pruefeBloecke));
         }
+    }
   }
   return probleme;
 }

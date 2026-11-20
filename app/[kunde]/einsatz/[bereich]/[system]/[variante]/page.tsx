@@ -21,9 +21,13 @@ export default async function EinsatzSeite({ params }: PageProps<"/[kunde]/einsa
     <div className="mx-auto flex min-h-dvh w-full max-w-xl flex-col">
       <EinsatzApp
         pfad={{ kunde: p.kunde, bereich: p.bereich, system: p.system, variante: p.variante }}
-        bezeichnung={{ kunde: kunde.name, system: eintrag.systemName, hersteller: eintrag.herstellerName }}
+        bezeichnung={{
+          kunde: `${kunde.name} · ${eintrag.bereichName}`,
+          system: eintrag.systemName,
+          hersteller: eintrag.herstellerName,
+        }}
         variante={eintrag.v}
-        kunde={{ links: kunde.links, ankunft: kunde.ankunft }}
+        kunde={{ links: kunde.links, ankunft: eintrag.ankunft }}
         startUrl={`/${kunde.id}`}
       />
     </div>

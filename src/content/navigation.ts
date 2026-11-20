@@ -18,6 +18,8 @@ export function alleVarianten() {
           bereichName: b.name,
           systemName: s.name,
           herstellerName: repo.getHersteller(v.hersteller)?.name ?? v.hersteller,
+          /** Ankunftsvorgaben: Bereich (z. B. Lidl) vor Kunde. */
+          ankunft: b.ankunft ?? k.ankunft,
           v,
         })),
       ),

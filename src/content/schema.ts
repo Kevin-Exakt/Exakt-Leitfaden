@@ -186,6 +186,12 @@ export const HerstellerDateiSchema = z.strictObject({
 });
 export type Hersteller = z.infer<typeof HerstellerDateiSchema>["hersteller"][number];
 
+export const AnkunftSchema = z.strictObject({
+  hinweise: z.array(BlockSchema).default([]),
+  checkliste: z.array(ListenEintragSchema).default([]),
+});
+export type Ankunft = z.infer<typeof AnkunftSchema>;
+
 export const KundeDateiSchema = z.strictObject({
   name: z.string().min(1),
   aktiv: z.boolean().default(true),
@@ -193,14 +199,19 @@ export const KundeDateiSchema = z.strictObject({
     abmeldung: z.url(),
     dokumentation: z.url(),
   }),
-  ankunft: z.strictObject({
-    hinweise: z.array(BlockSchema).default([]),
-    checkliste: z.array(ListenEintragSchema).default([]),
-  }),
+  /** Step 2 – gilt für alle Bereiche des Kunden, sofern ein Bereich keine eigene Ankunft festlegt. */
+  ankunft: AnkunftSchema.default({ hinweise: [], checkliste: [] }),
 });
 
+/**
+ * Bereich unterhalb eines Kunden – z. B. ein Endkunde (Pan Oston → Lidl)
+ * oder ein Servicebereich. Kann eigene Ankunftsvorgaben haben.
+ */
 export const BereichDateiSchema = z.strictObject({
   name: z.string().min(1),
+  beschreibung: z.string().optional(),
+  /** Ersetzt die Ankunftsvorgaben des Kunden, z. B. Anmeldung im Lidl-Markt. */
+  ankunft: AnkunftSchema.optional(),
 });
 
 export const SystemDateiSchema = z.strictObject({

@@ -58,7 +58,7 @@ function EinsatzStarten({ bezeichnung, variante, laufender, onStart }: EinsatzAp
     <>
       <main className="flex-1 space-y-5 px-4 py-5">
         <Karte className="space-y-1">
-          <p className="text-sm text-text-leise">{bezeichnung.kunde} · Service</p>
+          <p className="text-sm text-text-leise">{bezeichnung.kunde}</p>
           <h1 className="text-2xl font-bold">{bezeichnung.system}</h1>
           <p className="text-lg">Hersteller: {bezeichnung.hersteller}</p>
           {variante.status === "entwurf" && <div className="pt-2"><EntwurfBadge /></div>}

@@ -16,7 +16,7 @@ export default async function KundenStart({ params }: PageProps<"/[kunde]">) {
   if (!kunde) notFound();
 
   return (
-    <Seite kopf={<Kopf titel={`${kunde.name} Service`} unterzeile="Exakt-Service Navigator" />}>
+    <Seite kopf={<Kopf titel={kunde.name} unterzeile="Exakt-Service Navigator" zurueck="/" />}>
       <LaufenderEinsatz kunde={kunde.id} namen={variantenNamen(kunde.id)} />
       <div className="space-y-3 pt-2">
         <ButtonLink href={`/${kunde.id}/einsatz`} variante="primaer" breit icon={<PlayCircle className="size-6" />} className="min-h-20 text-xl">

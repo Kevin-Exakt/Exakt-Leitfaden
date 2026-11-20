@@ -3,7 +3,8 @@
 Interaktive Service-Webapp für Techniker von **Exakt-Service**. Führt Techniker Schritt für Schritt
 durch einen Serviceeinsatz (Vorbereitung → Ankunft → Fehleraufnahme → Funktionstest → Diagnose →
 Reparatur → Nachtest → Abmeldung/Doku) und bietet dem Innendienst eine vollständige Handbuchansicht.
-Erster Kunde: **Lidl**, Pilot: **Zigarettenträger → NERA**.
+Kunden: Pan Oston, Rowius, Retec, Iris, InstaServe. Pilot: **Pan Oston → Lidl → Zigarettenträger → NERA**.
+Hierarchie: Kunde → Bereich (z. B. Endkunde Lidl) → System → Hersteller-Variante.
 
 Vollständiges Konzept: `docs/KONZEPT.md` (Abschnitt 0 = getroffene Entscheidungen).
 Inhalte schreiben: `docs/INHALTE.md`.

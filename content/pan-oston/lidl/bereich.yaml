@@ -1,13 +1,7 @@
-# Kunde Lidl – Vorgaben, die für alle Lidl-Einsätze gelten.
+# Pan Oston → Lidl
 name: Lidl
-aktiv: true
 
-# Step 6 (Abmeldung) und Step 7 (Dokumentation) laufen über die bestehende Exakt-Service-Anwendung.
-links:
-  abmeldung: https://bericht.service-exakt.de/
-  dokumentation: https://bericht.service-exakt.de/
-
-# Step 2 – Ankunft / Anmeldung
+# Step 2 – Ankunft / Anmeldung im Lidl-Markt (ersetzt die Vorgaben des Kunden)
 ankunft:
   hinweise:
     - typ: hinweis

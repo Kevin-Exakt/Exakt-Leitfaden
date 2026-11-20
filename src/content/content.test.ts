@@ -19,13 +19,16 @@ describe("Inhalte unter content/", () => {
     expect(alle.filter((p) => p.schwere === "fehler")).toEqual([]);
   });
 
-  it("enthalten den Piloten Lidl → Zigarettenträger → NERA", () => {
+  it("enthalten alle Kunden und den Piloten Pan Oston → Lidl → Zigarettenträger → NERA", () => {
     const repo = createRepository(tree);
-    const pfad = { kunde: "lidl", bereich: "service", system: "zigarettentraeger", variante: "nera" };
+    expect(repo.getKunden().map((k) => k.name)).toEqual(["InstaServe", "Iris", "Pan Oston", "Retec", "Rowius"]);
+    expect(repo.getKunde("lidl")).toBeUndefined();
+    expect(repo.getKunde("pan-oston")?.bereiche.find((b) => b.id === "lidl")?.ankunft?.checkliste).toHaveLength(3);
+    const pfad = { kunde: "pan-oston", bereich: "lidl", system: "zigarettentraeger", variante: "nera" };
     const nera = repo.getVariante(pfad);
     expect(nera?.hersteller).toBe("nera");
     expect(repo.getFlow(pfad, "faehrt-nicht-auf")?.typ).toBe("diagnose");
-    expect(repo.getKunde("lidl")?.links.dokumentation).toBe("https://bericht.service-exakt.de/");
+    expect(repo.getKunde("pan-oston")?.links.dokumentation).toBe("https://bericht.service-exakt.de/");
   });
 });
 
