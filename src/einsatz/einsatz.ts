@@ -283,7 +283,8 @@ export function weiter(e: Einsatz, k: Kontext): Einsatz {
 
   switch (s.typ) {
     case "vorbereitung":
-      return gehe(e, { typ: "ankunft" });
+      // Schritt „Ankunft“ entfällt – direkt zur Fehleraufnahme
+      return gehe(e, { typ: "aufnahme" });
     case "ankunft":
       return gehe(e, { typ: "aufnahme" });
     case "aufnahme": {
@@ -407,18 +408,18 @@ export function schrittZurueck(e: Einsatz): Einsatz {
 
 export const SCHRITT_INFO: Record<Schritt["typ"], { nummer: string; titel: string; position: number }> = {
   vorbereitung: { nummer: "1", titel: "Vorbereitung", position: 0 },
-  ankunft: { nummer: "2", titel: "Ankunft", position: 1 },
-  aufnahme: { nummer: "2.1", titel: "Fehleraufnahme", position: 2 },
-  funktionstest: { nummer: "3", titel: "Funktionstest", position: 3 },
-  diagnose: { nummer: "3.1", titel: "Fehleranalyse", position: 4 },
-  reparatur: { nummer: "4", titel: "Reparatur", position: 5 },
-  nachtest: { nummer: "5", titel: "Funktionstest nach Reparatur", position: 6 },
-  restfehler: { nummer: "5", titel: "Weitere Fehlerbilder", position: 6 },
-  abmeldung: { nummer: "6", titel: "Abmeldung", position: 7 },
-  dokumentation: { nummer: "7", titel: "Dokumentation", position: 8 },
-  abgeschlossen: { nummer: "✓", titel: "Abgeschlossen", position: 9 },
+  ankunft: { nummer: "–", titel: "Ankunft (entfällt)", position: 0 },
+  aufnahme: { nummer: "2", titel: "Fehleraufnahme", position: 1 },
+  funktionstest: { nummer: "3", titel: "Funktionstest", position: 2 },
+  diagnose: { nummer: "3.1", titel: "Fehleranalyse", position: 3 },
+  reparatur: { nummer: "4", titel: "Reparatur", position: 4 },
+  nachtest: { nummer: "5", titel: "Funktionstest nach Reparatur", position: 5 },
+  restfehler: { nummer: "5", titel: "Weitere Fehlerbilder", position: 5 },
+  abmeldung: { nummer: "6", titel: "Abmeldung", position: 6 },
+  dokumentation: { nummer: "7", titel: "Dokumentation", position: 7 },
+  abgeschlossen: { nummer: "✓", titel: "Abgeschlossen", position: 8 },
 };
-export const ANZAHL_POSITIONEN = 9;
+export const ANZAHL_POSITIONEN = 8;
 
 export function schrittInfo(s: Schritt) {
   const info = SCHRITT_INFO[s.typ];

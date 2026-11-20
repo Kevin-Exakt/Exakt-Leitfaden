@@ -1,7 +1,7 @@
 # Exakt-Service Navigator – Projektkontext
 
 Interaktive Service-Webapp für Techniker von **Exakt-Service**. Führt Techniker Schritt für Schritt
-durch einen Serviceeinsatz (Vorbereitung → Ankunft → Fehleraufnahme → Funktionstest → Diagnose →
+durch einen Serviceeinsatz (Vorbereitung → Fehleraufnahme → Funktionstest → Diagnose →
 Reparatur → Nachtest → Abmeldung/Doku) und bietet dem Innendienst eine vollständige Handbuchansicht.
 Auftraggeber: Pan Oston, Rowius, Retec, Iris, InstaServe. Pilot: **Pan Oston → Lidl → Zigarettenträger → NERA**.
 Hierarchie: **Auftraggeber** (Pan Oston) → **Kunde** (Lidl) → System → Hersteller-Variante.

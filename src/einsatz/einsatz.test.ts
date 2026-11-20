@@ -42,8 +42,6 @@ function bisFunktionstest(...fehlerbilder: string[]): Einsatz {
   for (const id of ["werkzeug-demo-1", "werkzeug-demo-2", "messgeraet-demo", "auftrag"])
     e = checkUmschalten(e, "vorbereitung", id);
   e = weiter(e, k);
-  for (const id of k.ankunftPflicht) e = checkUmschalten(e, "ankunft", id);
-  e = weiter(e, k);
   for (const fb of fehlerbilder) e = fehlerbildUmschalten(e, fb);
   return weiter(e, k);
 }
@@ -59,8 +57,6 @@ describe("Einsatzablauf", () => {
     let e = neuerEinsatz(pfad);
     for (const id of ["werkzeug-demo-1", "werkzeug-demo-2", "messgeraet-demo", "auftrag"])
       e = checkUmschalten(e, "vorbereitung", id);
-    e = weiter(e, k);
-    for (const id of k.ankunftPflicht) e = checkUmschalten(e, "ankunft", id);
     e = weiter(e, k);
     expect(kannWeiter(e, k).ok).toBe(false);
   });
@@ -195,11 +191,9 @@ describe("Lidl → Zigarettenträger → ITAB: 15-Sekunden-Modus", () => {
   const kItab: Kontext = { ...k, variante: itab };
   const antw = (e: Einsatz, ...ids: string[]) => ids.reduce((acc, id) => antworten(acc, itab, id), e);
 
-  /** Vorbereitung (leer), Ankunft, Fehlerbild wählen, allgemeiner Funktionstest „Nein“. */
+  /** Vorbereitung (leer), Fehlerbild wählen, allgemeiner Funktionstest „Nein“. */
   function bisDiagnose(): Einsatz {
     let e = weiter(neuerEinsatz(pfadItab), kItab);
-    for (const id of kItab.ankunftPflicht) e = checkUmschalten(e, "ankunft", id);
-    e = weiter(e, kItab);
     e = weiter(fehlerbildUmschalten(e, "15-sekunden-modus-nicht-aktiv"), kItab);
     expect(aktiverLauf(e, itab)?.flow.id).toBe("standard-funktionstest");
     return weiter(antw(e, "nein"), kItab);
@@ -237,8 +231,6 @@ describe("Lidl → Zigarettenträger → ITAB: schließt nicht komplett", () => 
 
   function bisDiagnose(): Einsatz {
     let e = weiter(neuerEinsatz(pfadItab), kItab);
-    for (const id of kItab.ankunftPflicht) e = checkUmschalten(e, "ankunft", id);
-    e = weiter(e, kItab); // → Fehleraufnahme
     e = weiter(fehlerbildUmschalten(e, fb), kItab); // → Funktionstest
     return weiter(antw(e, "nein"), kItab);
   }
