@@ -24,7 +24,13 @@ Inhalte schreiben: `docs/INHALTE.md`.
 - `src/content/validate-content.ts` – Querverweise zwischen Dateien.
 - `src/engine/` – Diagnose-Engine. **Reines TypeScript, keine Imports aus React/Next/fs.**
   Zustandslos: `stand(flow, verlauf)` berechnet den aktuellen Knoten aus dem Antwortverlauf.
-- `app/` – nur Routen/Layouts, keine Fachlogik.
+- `src/einsatz/einsatz.ts` – Ablaufsteuerung Step 1–7 (rein, getestet). Regeln: jedes Fehlerbild
+  nacheinander, nach Reparatur/Behebung/Eskalation immer Nachtest, Abmeldung erst nach bestandenem
+  Nachtest oder bewusstem „nicht erfolgreich“. `speicher.ts` = localStorage-Hook.
+- `src/components/` – `ui/` Bausteine, `blocks/` Inhaltsblöcke, `techniker/` Einsatz & Prüfungsansicht.
+  Client-Komponenten dürfen aus `src/content` nur **Typen** importieren (kein `fs`, kein Zod im Browser).
+- `app/` – nur Routen/Layouts, keine Fachlogik. Seiten lesen Inhalte über `src/content/navigation.ts`
+  bzw. `getRepository()` und nutzen `generateStaticParams`.
 
 Alle Abläufe (Funktionstest, Diagnose, Rückwärtsverfahren, Reparatur) nutzen dasselbe Knotenmodell.
 
