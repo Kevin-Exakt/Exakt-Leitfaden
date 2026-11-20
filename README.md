@@ -12,7 +12,7 @@ mit vollständiger Handbuchansicht für den Innendienst.
 |---|---|---|
 | 1 | Konzept | ✅ |
 | 2 | Datenschema, Diagnose-Engine, Inhaltsprüfung, Demo-Inhalt NERA | ✅ |
-| 3 | Technikerablauf (Oberfläche) | offen |
+| 3 | Technikerablauf (Oberfläche, Schritte 1–7, Leitfäden zum Nachschlagen) | ✅ |
 | 4 | Innendienst | offen |
 
 ## Installation
@@ -42,6 +42,8 @@ npm run dev          # http://localhost:3000
 ```
 app/                 Seiten und Layouts (Next.js App Router)
 src/engine/          Diagnose-Engine – reines TypeScript, unabhängig von der Oberfläche
+src/einsatz/         Ablaufsteuerung Step 1–7 (rein) + Speicherung im Browser
+src/components/      ui/ (Bausteine), blocks/ (Inhaltsblöcke), techniker/ (Einsatz, Prüfungsansicht)
 src/content/         Datenschema, Laden und Prüfen der Inhalte, Repository
 content/             Fachinhalte als YAML (Kunde → Bereich → System → Hersteller → Abläufe)
 public/medien/       Bilder, PDFs
