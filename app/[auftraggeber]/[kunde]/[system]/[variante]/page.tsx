@@ -1,7 +1,11 @@
 import { notFound } from "next/navigation";
+import { FileClock } from "lucide-react";
 import { alleVarianten, variantenParams } from "@/src/content/navigation";
 import { getRepository } from "@/src/content/repository";
+import { leitfadenVorhanden } from "@/src/content/schema";
 import { EinsatzApp } from "@/src/components/techniker/EinsatzApp";
+import { ButtonLink } from "@/src/components/ui/Button";
+import { Kopf, Seite } from "@/src/components/ui/Rahmen";
 
 export function generateStaticParams() {
   return variantenParams();
@@ -16,6 +20,34 @@ export default async function LeitfadenSeite({ params }: PageProps<"/[auftraggeb
   );
   const auftraggeber = getRepository().getAuftraggeber(p.auftraggeber);
   if (!eintrag || !auftraggeber) notFound();
+  const auswahlUrl = `/${auftraggeber.id}/${p.kunde}`;
+
+  // Hersteller ist angelegt, aber Funktionstest/Fehlerbilder fehlen noch
+  if (!leitfadenVorhanden(eintrag.v)) {
+    return (
+      <Seite
+        kopf={
+          <Kopf
+            titel={`${eintrag.systemName} · ${eintrag.herstellerName}`}
+            unterzeile={`${auftraggeber.name} · ${eintrag.kundeName}`}
+            zurueck={auswahlUrl}
+          />
+        }
+      >
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-slate-300 bg-karte p-8 text-center">
+          <FileClock className="size-10 text-text-leise" aria-hidden />
+          <p className="text-lg font-semibold">Leitfaden folgt</p>
+          <p className="text-text-leise">
+            Für {eintrag.systemName} von {eintrag.herstellerName} ist noch kein Leitfaden hinterlegt. Bei Fragen bitte den
+            Innendienst kontaktieren.
+          </p>
+        </div>
+        <ButtonLink href={auswahlUrl} breit>
+          Zurück zur Auswahl
+        </ButtonLink>
+      </Seite>
+    );
+  }
 
   return (
     <div className="mx-auto flex min-h-dvh w-full max-w-xl flex-col">
@@ -29,7 +61,7 @@ export default async function LeitfadenSeite({ params }: PageProps<"/[auftraggeb
         variante={eintrag.v}
         auftraggeber={{ links: auftraggeber.links, ankunft: eintrag.ankunft }}
         startUrl={`/${auftraggeber.id}`}
-        auswahlUrl={`/${auftraggeber.id}/${p.kunde}`}
+        auswahlUrl={auswahlUrl}
       />
     </div>
   );

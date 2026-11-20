@@ -17,7 +17,7 @@ export function alleVarianten() {
           auftraggeberName: k.name,
           kundeName: b.name,
           systemName: s.name,
-          herstellerName: repo.getHersteller(v.hersteller)?.name ?? v.hersteller,
+          herstellerName: v.name ?? repo.getHersteller(v.hersteller)?.name ?? v.hersteller,
           /** Ankunftsvorgaben: Kunde (z. B. Lidl) vor Auftraggeber. */
           ankunft: b.ankunft ?? k.ankunft,
           v,

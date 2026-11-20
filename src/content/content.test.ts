@@ -57,11 +57,24 @@ describe("Laden & Querverweise", () => {
   it("meldet Schemafehler mit Datei und Feld", () => {
     const dir = tempContent({
       ...minimal,
-      "k/b/s/v/variante.yaml": "hersteller: nera\nstatus: fertig\nfunktionstest: test\nfehlerbilder: []\n",
+      "k/b/s/v/variante.yaml": "hersteller: nera\nstatus: fertig\nfunktionstest: test\nfehlerbilder: [{ id: f }]\n",
     });
     const { probleme } = loadContent(dir);
     expect(probleme.map((p) => p.ort)).toEqual(
-      expect.arrayContaining(["k/b/s/v/variante.yaml › status", "k/b/s/v/variante.yaml › fehlerbilder"]),
+      expect.arrayContaining(["k/b/s/v/variante.yaml › status", "k/b/s/v/variante.yaml › fehlerbilder.0.titel"]),
+    );
+  });
+
+  it("erlaubt Hersteller ohne Leitfaden, aber keine Fehlerbilder ohne Funktionstest", () => {
+    const ohne = loadContent(tempContent({ ...minimal, "k/b/s/v/variante.yaml": "hersteller: nera\nstatus: entwurf\n" }));
+    expect(ohne.probleme).toEqual([]);
+    expect(ohne.tree.auftraggeber[0].kunden[0].systeme[0].varianten[0].vorbereitung.werkzeug).toEqual([]);
+
+    const halb = loadContent(
+      tempContent({ ...minimal, "k/b/s/v/variante.yaml": "hersteller: nera\nstatus: entwurf\nfehlerbilder: [{ id: f, titel: F }]\n" }),
+    );
+    expect(validateContent(halb.tree).map((p) => p.meldung)).toEqual(
+      expect.arrayContaining([expect.stringContaining("kein \"funktionstest\"")]),
     );
   });
 

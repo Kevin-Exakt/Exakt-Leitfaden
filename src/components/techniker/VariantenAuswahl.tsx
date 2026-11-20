@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ChevronRight, Inbox } from "lucide-react";
-import type { Auftraggeber, Kunde } from "@/src/content/schema";
+import { leitfadenVorhanden, type Auftraggeber, type Kunde } from "@/src/content/schema";
 import { getRepository } from "@/src/content/repository";
 import { EntwurfBadge } from "../ui/Karte";
 
@@ -59,8 +59,12 @@ export function SystemAuswahl({ kunde, basis }: { kunde: Kunde; basis: string })
             {s.varianten.map((v) => (
               <Link key={v.id} href={`${basis}/${s.id}/${v.id}`} className={ZEILE}>
                 <span className="flex-1">
-                  <span className="block text-lg font-semibold">{repo.getHersteller(v.hersteller)?.name ?? v.hersteller}</span>
-                  {v.status === "entwurf" && <EntwurfBadge />}
+                  <span className="block text-lg font-semibold">{v.name ?? repo.getHersteller(v.hersteller)?.name ?? v.hersteller}</span>
+                  {!leitfadenVorhanden(v) ? (
+                    <span className="block text-sm text-text-leise">Leitfaden folgt</span>
+                  ) : (
+                    v.status === "entwurf" && <EntwurfBadge />
+                  )}
                 </span>
                 <ChevronRight className="size-5 text-text-leise" aria-hidden />
               </Link>
