@@ -1,8 +1,18 @@
-# Alle Hersteller – kundenübergreifend. Varianten verweisen über die ID hierauf.
+# Alle Hersteller – auftraggeberübergreifend. Varianten verweisen über die ID hierauf.
 hersteller:
+  - id: checkpoint
+    name: Checkpoint
+  - id: instore-communication
+    name: Instore Communication
   - id: itab
     name: ITAB
-  - id: nera
-    name: NERA
   - id: kessebohmer
     name: Kesseböhmer
+  - id: nedap
+    name: Nedap
+  - id: nera
+    name: NERA
+  - id: shopguard
+    name: Shopguard
+  - id: wanzl
+    name: Wanzl

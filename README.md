@@ -12,7 +12,7 @@ mit vollständiger Handbuchansicht für den Innendienst.
 |---|---|---|
 | 1 | Konzept | ✅ |
 | 2 | Datenschema, Diagnose-Engine, Inhaltsprüfung, Demo-Inhalt NERA | ✅ |
-| 3 | Technikerablauf (Oberfläche, Schritte 1–7, Leitfäden zum Nachschlagen) | ✅ |
+| 3 | Geführter Leitfaden für Techniker (Schritte 1–7) | ✅ |
 | 4 | Innendienst | offen |
 
 ## Installation

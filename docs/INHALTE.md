@@ -35,8 +35,19 @@ Erscheint sofort in der Auftraggeber-Auswahl.
 
 **Neuen Kunden anlegen:** Ordner unter dem Auftraggeber mit `kunde.yaml` (`name`).
 
+**Auftraggeber ohne eigene Kunden** (z. B. Retec): genau einen Kundenordner anlegen
+(`content/retec/direkt/`). Hat ein Auftraggeber nur einen Kunden, überspringt die App
+die Kundenauswahl und zeigt direkt die Systeme.
+
 **Ankunft (Step 2):** Steht `ankunft:` in `kunde.yaml`, gilt sie für diesen Kunden
 (z. B. Anmeldung im Lidl-Markt). Sonst gilt `ankunft:` aus `auftraggeber.yaml`.
+
+**Hersteller ohne Leitfaden:** Es reicht eine `variante.yaml` mit `hersteller:` und `status: entwurf`.
+Die App zeigt dann „Leitfaden folgt“. Sobald `funktionstest:` und `fehlerbilder:` eingetragen sind,
+startet der Leitfaden.
+
+**Mehrere Varianten eines Herstellers** (z. B. Kesseböhmer Alt / Neu): je ein Ordner
+(`kessebohmer-alt/`, `kessebohmer-neu/`) mit `hersteller: kessebohmer` und `name: Kesseböhmer Alt`.
 
 **Neuen Hersteller anlegen:** Ordner `nera/` kopieren, umbenennen (z. B. `itab/`),
 `hersteller:` in `variante.yaml` anpassen, Inhalte ersetzen.

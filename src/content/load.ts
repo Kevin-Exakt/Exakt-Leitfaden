@@ -92,7 +92,11 @@ export function loadContent(contentDir: string): LadeErgebnis {
 
   function ladeVariante(dir: string, id: string): Variante | null {
     const meta = lies(path.join(dir, "variante.yaml"), VarianteDateiSchema);
-    const vorbereitung = lies(path.join(dir, "vorbereitung.yaml"), VorbereitungDateiSchema);
+    // vorbereitung.yaml ist optional (z. B. Hersteller ohne Leitfaden)
+    const vbDatei = path.join(dir, "vorbereitung.yaml");
+    const vorbereitung = fs.existsSync(vbDatei)
+      ? lies(vbDatei, VorbereitungDateiSchema)
+      : VorbereitungDateiSchema.parse({});
     const flows: Record<string, Flow> = {};
     for (const unter of fs.readdirSync(dir, { withFileTypes: true }).filter((e) => e.isDirectory())) {
       for (const datei of yamlDateienRekursiv(path.join(dir, unter.name))) {

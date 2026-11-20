@@ -59,6 +59,8 @@ function validateVariante(
 
   const varianteOrt = `${basis}/variante.yaml`;
   verweis(varianteOrt, "funktionstest", v.funktionstest, "funktionstest");
+  if (v.fehlerbilder.length > 0 && !v.funktionstest)
+    fehler(varianteOrt, "Fehlerbilder sind angelegt, aber kein \"funktionstest\" – der Leitfaden kann nicht starten.");
   verweis(varianteOrt, "nachtest", v.nachtest, "funktionstest");
 
   const fehlerbildIds = new Set<string>();
@@ -97,7 +99,7 @@ function validateVariante(
   }
 
   // Hinweis auf Abläufe, die nirgends verwendet werden
-  const verwendet = new Set<string>([v.funktionstest, v.nachtest ?? ""]);
+  const verwendet = new Set<string>([v.funktionstest ?? "", v.nachtest ?? ""]);
   for (const fb of v.fehlerbilder) [fb.diagnose, fb.rueckwaerts].forEach((id) => id && verwendet.add(id));
   for (const flow of Object.values(v.flows))
     for (const k of flow.knoten) if (k.reparatur) verwendet.add(k.reparatur);

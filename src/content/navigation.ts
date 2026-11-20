@@ -17,7 +17,7 @@ export function alleVarianten() {
           auftraggeberName: k.name,
           kundeName: b.name,
           systemName: s.name,
-          herstellerName: repo.getHersteller(v.hersteller)?.name ?? v.hersteller,
+          herstellerName: v.name ?? repo.getHersteller(v.hersteller)?.name ?? v.hersteller,
           /** Ankunftsvorgaben: Kunde (z. B. Lidl) vor Auftraggeber. */
           ankunft: b.ankunft ?? k.ankunft,
           v,
@@ -35,6 +35,19 @@ export function auftraggeberParams() {
   return getRepository()
     .getAlleAuftraggeber()
     .map((k) => ({ auftraggeber: k.id }));
+}
+
+export function kundenParams() {
+  return getRepository()
+    .getAlleAuftraggeber()
+    .flatMap((a) => a.kunden.map((k) => ({ auftraggeber: a.id, kunde: k.id })));
+}
+
+/** Auftraggeber + Kunde für Seiten; undefined, wenn es die Kombination nicht gibt. */
+export function findeKunde(auftraggeberId: string, kundeId: string) {
+  const auftraggeber = getRepository().getAuftraggeber(auftraggeberId);
+  const kunde = auftraggeber?.kunden.find((k) => k.id === kundeId);
+  return auftraggeber && kunde ? { auftraggeber, kunde } : undefined;
 }
 
 /** "kunde/system/variante" → "Zigarettenträger · NERA" */

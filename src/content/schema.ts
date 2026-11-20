@@ -233,13 +233,15 @@ export type Fehlerbild = z.infer<typeof FehlerbildSchema>;
 export const VarianteDateiSchema = z.strictObject({
   /** Verweis auf content/hersteller.yaml */
   hersteller: IdSchema,
+  /** Anzeigename, falls abweichend vom Hersteller – z. B. „Kesseböhmer Alt“ / „Kesseböhmer Neu“. */
+  name: z.string().min(1).optional(),
   status: StatusSchema,
   beschreibung: z.string().optional(),
-  /** Ablauf für Step 3. */
-  funktionstest: IdSchema,
+  /** Ablauf für Step 3. Fehlt er, ist für diese Variante noch kein Leitfaden hinterlegt. */
+  funktionstest: IdSchema.optional(),
   /** Ablauf für Step 5. Standard: derselbe wie funktionstest. */
   nachtest: IdSchema.optional(),
-  fehlerbilder: z.array(FehlerbildSchema).min(1),
+  fehlerbilder: z.array(FehlerbildSchema).default([]),
 });
 
 export const VorbereitungDateiSchema = z.strictObject({
@@ -266,6 +268,11 @@ export type Variante = z.infer<typeof VarianteDateiSchema> & {
 export type System = z.infer<typeof SystemDateiSchema> & { id: string; varianten: Variante[] };
 export type Kunde = z.infer<typeof KundeDateiSchema> & { id: string; systeme: System[] };
 export type Auftraggeber = z.infer<typeof AuftraggeberDateiSchema> & { id: string; kunden: Kunde[] };
+
+/** Ist für die Variante ein durchführbarer Leitfaden hinterlegt (Funktionstest + mind. ein Fehlerbild)? */
+export function leitfadenVorhanden(v: Pick<Variante, "funktionstest" | "fehlerbilder">): boolean {
+  return Boolean(v.funktionstest) && v.fehlerbilder.length > 0;
+}
 
 export type ContentTree = {
   hersteller: Hersteller[];
