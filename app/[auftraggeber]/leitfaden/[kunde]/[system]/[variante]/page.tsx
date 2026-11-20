@@ -38,7 +38,7 @@ export default async function VariantenLeitfaden({ params }: PageProps<"/[auftra
   ] as const;
 
   return (
-    <Seite kopf={<Kopf titel={`${x.systemName} · ${x.herstellerName}`} unterzeile="Leitfaden" zurueck={`/${p.auftraggeber}/leitfaden`} />}>
+    <Seite kopf={<Kopf titel={`${x.systemName} · ${x.herstellerName}`} unterzeile={`${x.kundeName} · Leitfaden`} zurueck={`/${p.auftraggeber}/leitfaden/${p.kunde}`} />}>
       {v.status === "entwurf" && <EntwurfBadge />}
 
       {GRUPPEN.map((g) => {

@@ -37,6 +37,19 @@ export function auftraggeberParams() {
     .map((k) => ({ auftraggeber: k.id }));
 }
 
+export function kundenParams() {
+  return getRepository()
+    .getAlleAuftraggeber()
+    .flatMap((a) => a.kunden.map((k) => ({ auftraggeber: a.id, kunde: k.id })));
+}
+
+/** Auftraggeber + Kunde für Seiten; undefined, wenn es die Kombination nicht gibt. */
+export function findeKunde(auftraggeberId: string, kundeId: string) {
+  const auftraggeber = getRepository().getAuftraggeber(auftraggeberId);
+  const kunde = auftraggeber?.kunden.find((k) => k.id === kundeId);
+  return auftraggeber && kunde ? { auftraggeber, kunde } : undefined;
+}
+
 /** "kunde/system/variante" → "Zigarettenträger · NERA" */
 export function variantenNamen(auftraggeber: string): Record<string, string> {
   return Object.fromEntries(
