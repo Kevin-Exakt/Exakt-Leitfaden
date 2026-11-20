@@ -54,7 +54,7 @@ export function SystemAuswahl({ kunde, basis }: { kunde: Kunde; basis: string })
       {kunde.systeme.map((s) => (
         <section key={s.id} className="space-y-2">
           <h2 className="text-xl font-bold">{s.name}</h2>
-          <p className="text-sm text-text-leise">Hersteller auswählen</p>
+          {s.varianten.length > 0 && <p className="text-sm text-text-leise">Hersteller auswählen</p>}
           <div className="space-y-2">
             {s.varianten.map((v) => (
               <Link key={v.id} href={`${basis}/${s.id}/${v.id}`} className={ZEILE}>
