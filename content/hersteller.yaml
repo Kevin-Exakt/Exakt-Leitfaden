@@ -1,0 +1,8 @@
+# Alle Hersteller – kundenübergreifend. Varianten verweisen über die ID hierauf.
+hersteller:
+  - id: itab
+    name: ITAB
+  - id: nera
+    name: NERA
+  - id: kessebohmer
+    name: Kesseböhmer

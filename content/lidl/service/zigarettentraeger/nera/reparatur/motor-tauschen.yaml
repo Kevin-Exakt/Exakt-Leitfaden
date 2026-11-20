@@ -1,0 +1,65 @@
+# Step 4 – Reparaturleitfaden „Motor tauschen“
+# DEMO: Nur Struktur. Die echten Arbeitsschritte erstellt Exakt-Service.
+typ: reparatur
+titel: Motor tauschen
+beschreibung: "DEMO – Ursache: Motor defekt. Betroffene Komponente: Antriebsmotor."
+status: entwurf
+version: 1
+start: voraussetzungen
+benoetigt: [werkzeug-demo-1, werkzeug-demo-2, ersatzteil-motor-demo]
+
+hinweise:
+  - typ: hinweis
+    titel: DEMO – nicht fachlich freigegeben
+    text: Dieser Reparaturleitfaden enthält nur Platzhalter.
+
+knoten:
+  - id: voraussetzungen
+    art: anweisung
+    titel: Voraussetzungen vor der Reparatur
+    pflicht:
+      text: "DEMO: Sicherheitsvorgaben vor Beginn der Reparatur eingehalten"
+      punkte:
+        - "DEMO: Sicherheitspunkt 1"
+        - "DEMO: Sicherheitspunkt 2"
+    inhalt:
+      - typ: sicherheit
+        titel: DEMO – Sicherheitshinweis
+        text: Platzhalter. Sicherheitsvorgaben werden von Exakt-Service ergänzt.
+    antworten:
+      - { label: "Weiter", id: weiter, weiter: demontage }
+
+  - id: demontage
+    art: anweisung
+    titel: "DEMO: Demontage"
+    inhalt:
+      - typ: bild
+        src: /medien/demo/platzhalter.svg
+        alt: Beispielbild Demontage
+    antworten:
+      - { label: "Erledigt", id: erledigt, weiter: einbau }
+
+  - id: einbau
+    art: anweisung
+    titel: "DEMO: Austausch und Montage"
+    benoetigt: [ersatzteil-motor-demo]
+    antworten:
+      - { label: "Erledigt", id: erledigt, weiter: abschlusskontrolle }
+      - { label: "Problem bei der Montage", id: problem, weiter: eskalation }
+
+  - id: abschlusskontrolle
+    art: frage
+    titel: "DEMO: Abschlusskontrolle in Ordnung?"
+    antworten:
+      - { label: "Ja", typ: ja, weiter: abgeschlossen }
+      - { label: "Nein", typ: nein, weiter: eskalation }
+
+  - id: abgeschlossen
+    art: ergebnis
+    ergebnis: abgeschlossen
+    titel: Reparatur abgeschlossen – weiter zum Funktionstest
+
+  - id: eskalation
+    art: ergebnis
+    ergebnis: eskalation
+    titel: Innendienst kontaktieren

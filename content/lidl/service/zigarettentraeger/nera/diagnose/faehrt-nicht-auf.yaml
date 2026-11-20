@@ -1,0 +1,97 @@
+# Step 3.1 – Fehleranalyse „Fährt nicht auf“
+# DEMO: Struktur nach Beispiel aus dem Projektbriefing. Inhalte nicht fachlich freigegeben.
+typ: diagnose
+titel: Fährt nicht auf
+status: entwurf
+version: 1
+start: steuereinheit-strom
+
+knoten:
+  - id: steuereinheit-strom
+    art: frage
+    titel: Hat die Steuereinheit Strom?
+    benoetigt: [messgeraet-demo]
+    inhalt:
+      - typ: hinweis
+        titel: DEMO – nicht fachlich freigegeben
+        text: Platzhalter-Prüfung. Prüfanweisung wird von Exakt-Service erstellt.
+      - typ: bild
+        src: /medien/demo/platzhalter.svg
+        alt: Beispielbild Steuereinheit
+    antworten:
+      - { label: "Ja", typ: ja, weiter: motor-dreht }
+      - { label: "Nein", typ: nein, weiter: spannungsversorgung }
+      - { label: "Prüfung nicht möglich", typ: nicht-moeglich, weiter: eskalation }
+
+  - id: spannungsversorgung
+    art: anweisung
+    titel: Spannungsversorgung nach Vorgabe prüfen
+    pflicht:
+      text: "DEMO: Sicherheitsvorgaben für Arbeiten an der Spannungsversorgung eingehalten"
+    inhalt:
+      - typ: sicherheit
+        titel: DEMO – Sicherheitshinweis
+        text: Platzhalter. Sicherheitsvorgaben werden von Exakt-Service ergänzt.
+    antworten:
+      - { label: "Spannung wiederhergestellt – System läuft", id: behoben, weiter: behoben }
+      - { label: "Spannung wiederhergestellt – Fehler besteht weiter", id: weiter-pruefen, weiter: motor-dreht }
+      - { label: "Spannung nicht herstellbar", id: nicht-herstellbar, weiter: eskalation }
+
+  - id: motor-dreht
+    art: frage
+    titel: Dreht der Motor?
+    inhalt:
+      - typ: hinweis
+        titel: DEMO – nicht fachlich freigegeben
+        text: Platzhalter-Prüfung.
+    antworten:
+      - { label: "Ja", typ: ja, weiter: mechanik }
+      - { label: "Nein", typ: nein, weiter: motor-beschaedigt }
+
+  - id: motor-beschaedigt
+    art: frage
+    titel: Ist der Motor sichtbar beschädigt?
+    inhalt:
+      - typ: text
+        text: "DEMO: Motor, Anschlüsse und mechanische Blockierung prüfen."
+      - typ: bild
+        src: /medien/demo/platzhalter.svg
+        alt: Beispielbild Motor
+    antworten:
+      - { label: "Ja", typ: ja, weiter: motor-tauschen }
+      - { label: "Nein", typ: nein, weiter: eskalation }
+
+  - id: mechanik
+    art: frage
+    titel: "DEMO: Mechanik / Antrieb in Ordnung?"
+    antworten:
+      - { label: "Ja", typ: ja, weiter: kein-befund }
+      - { label: "Nein", typ: nein, weiter: eskalation }
+
+  # --- Ergebnisse -------------------------------------------------------
+  - id: motor-tauschen
+    art: ergebnis
+    ergebnis: reparatur
+    reparatur: motor-tauschen
+    titel: Motor austauschen
+
+  - id: behoben
+    art: ergebnis
+    ergebnis: behoben
+    titel: Fehler behoben – weiter zum Funktionstest
+
+  - id: kein-befund
+    art: ergebnis
+    ergebnis: kein-befund
+    titel: Kein Befund in dieser Diagnose
+    inhalt:
+      - typ: hinweis
+        text: Bei weiterhin bestehendem Fehler den Innendienst kontaktieren.
+
+  - id: eskalation
+    art: ergebnis
+    ergebnis: eskalation
+    titel: Innendienst kontaktieren
+    inhalt:
+      - typ: hinweis
+        text: Die Diagnose findet keine Lösung. Verlaufszusammenfassung an den Innendienst durchgeben.

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450" role="img" aria-label="Beispielbild Platzhalter">
+  <rect width="800" height="450" fill="#F1F5F9"/>
+  <rect x="24" y="24" width="752" height="402" rx="16" fill="none" stroke="#94A3B8" stroke-width="3" stroke-dasharray="12 10"/>
+  <rect x="300" y="150" width="200" height="110" rx="10" fill="#FACC15"/>
+  <circle cx="360" cy="190" r="16" fill="#111827"/>
+  <path d="M316 248 l52-44 34 28 28-20 54 36z" fill="#111827"/>
+  <text x="400" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#334155">BEISPIELBILD</text>
+  <text x="400" y="356" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#64748B">Wird durch echtes Foto ersetzt</text>
+</svg>

@@ -1,0 +1,49 @@
+# Step 3.2 – Rückwärtsverfahren „Schließt nicht vollständig“
+# DEMO: zeigt nur die Struktur (vom Endzustand rückwärts zur Ursache). Nicht fachlich freigegeben.
+typ: rueckwaerts
+titel: Schließt nicht vollständig – Rückwärtsverfahren
+beschreibung: Ausgehend vom erwarteten Endzustand wird jede Komponente rückwärts geprüft.
+status: entwurf
+version: 1
+start: endposition
+
+knoten:
+  - id: endposition
+    art: frage
+    komponente: "DEMO: Endposition"
+    erwarteterZustand: "DEMO: System vollständig geschlossen"
+    titel: "DEMO: Ist die Endposition frei von Hindernissen?"
+    antworten:
+      - { label: "Ja", typ: ja, weiter: komponente-davor }
+      - { label: "Nein", typ: nein, weiter: hindernis-entfernt }
+
+  - id: hindernis-entfernt
+    art: anweisung
+    titel: "DEMO: Hindernis entfernen"
+    antworten:
+      - { label: "Erledigt – schließt jetzt", id: schliesst, weiter: behoben }
+      - { label: "Erledigt – schließt weiterhin nicht", id: schliesst-nicht, weiter: komponente-davor }
+
+  - id: komponente-davor
+    art: frage
+    komponente: "DEMO: davorliegende Komponente"
+    erwarteterZustand: "DEMO: Sollzustand wird ergänzt"
+    titel: "DEMO: Arbeitet die davorliegende Komponente korrekt?"
+    antworten:
+      - { label: "Ja", typ: ja, weiter: kein-befund }
+      - { label: "Nein", typ: nein, weiter: eskalation }
+
+  - id: behoben
+    art: ergebnis
+    ergebnis: behoben
+    titel: Fehler behoben – weiter zum Funktionstest
+
+  - id: kein-befund
+    art: ergebnis
+    ergebnis: kein-befund
+    titel: Kein Befund im Rückwärtsverfahren
+
+  - id: eskalation
+    art: ergebnis
+    ergebnis: eskalation
+    titel: Innendienst kontaktieren
