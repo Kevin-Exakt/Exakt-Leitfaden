@@ -5,15 +5,15 @@ import { schrittInfo } from "@/src/einsatz/einsatz";
 import { useEinsatz } from "@/src/einsatz/speicher";
 
 /** Zeigt auf der Startseite „Einsatz fortsetzen“, falls auf diesem Gerät einer läuft. */
-export function LaufenderEinsatz({ kunde, namen }: { kunde: string; namen: Record<string, string> }) {
+export function LaufenderEinsatz({ auftraggeber, namen }: { auftraggeber: string; namen: Record<string, string> }) {
   const [einsatz] = useEinsatz();
-  if (!einsatz || einsatz.pfad.kunde !== kunde) return null;
+  if (!einsatz || einsatz.pfad.auftraggeber !== auftraggeber) return null;
   const p = einsatz.pfad;
   const info = schrittInfo(einsatz.schritt);
-  const schluessel = `${p.bereich}/${p.system}/${p.variante}`;
+  const schluessel = `${p.kunde}/${p.system}/${p.variante}`;
   return (
     <Link
-      href={`/${p.kunde}/einsatz/${schluessel}`}
+      href={`/${p.auftraggeber}/einsatz/${schluessel}`}
       className="flex min-h-16 items-center gap-3 rounded-xl border-2 border-akzent-hover bg-akzent-hell px-4 py-3"
     >
       <History className="size-6 shrink-0" aria-hidden />

@@ -22,12 +22,13 @@ export function validateContent(tree: ContentTree, optionen: ValidierungsOptione
           probleme.push({ schwere: "fehler", ort, meldung: `Mediendatei "public${b.src}" fehlt.` });
   };
 
-  for (const kunde of tree.kunden) {
-    pruefeBloecke(kunde.ankunft.hinweise, `${kunde.id}/kunde.yaml`);
-    for (const bereich of kunde.bereiche)
-      for (const system of bereich.systeme)
+  for (const auftraggeber of tree.auftraggeber) {
+    pruefeBloecke(auftraggeber.ankunft.hinweise, `${auftraggeber.id}/auftraggeber.yaml`);
+    for (const kunde of auftraggeber.kunden) {
+      if (kunde.ankunft) pruefeBloecke(kunde.ankunft.hinweise, `${auftraggeber.id}/${kunde.id}/kunde.yaml`);
+      for (const system of kunde.systeme)
         for (const variante of system.varianten) {
-          const basis = `${kunde.id}/${bereich.id}/${system.id}/${variante.id}`;
+          const basis = `${auftraggeber.id}/${kunde.id}/${system.id}/${variante.id}`;
           if (!herstellerIds.has(variante.hersteller))
             probleme.push({
               schwere: "fehler",
@@ -36,6 +37,7 @@ export function validateContent(tree: ContentTree, optionen: ValidierungsOptione
             });
           probleme.push(...validateVariante(variante, basis, pruefeBloecke));
         }
+    }
   }
   return probleme;
 }

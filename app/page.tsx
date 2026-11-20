@@ -4,11 +4,11 @@ import { getRepository } from "@/src/content/repository";
 import { Kopf, Seite } from "@/src/components/ui/Rahmen";
 
 export default function Startseite() {
-  const kunden = getRepository().getKunden();
+  const auftraggeber = getRepository().getAlleAuftraggeber();
   return (
-    <Seite kopf={<Kopf titel="Exakt-Service Navigator" unterzeile="Kunde wählen" />}>
+    <Seite kopf={<Kopf titel="Exakt-Service Navigator" unterzeile="Auftraggeber wählen" />}>
       <div className="space-y-2">
-        {kunden.map((k) => (
+        {auftraggeber.map((k) => (
           <Link
             key={k.id}
             href={`/${k.id}`}

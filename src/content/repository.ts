@@ -7,34 +7,34 @@
  */
 import path from "node:path";
 import { loadContent } from "./load";
-import type { ContentTree, Flow, Hersteller, Kunde, Variante } from "./schema";
+import type { ContentTree, Flow, Hersteller, Auftraggeber, Variante } from "./schema";
 
 export type VariantenPfad = {
+  auftraggeber: string;
   kunde: string;
-  bereich: string;
   system: string;
   variante: string;
 };
 
 export interface ContentRepository {
-  getKunden(): Kunde[];
-  getKunde(id: string): Kunde | undefined;
+  getAlleAuftraggeber(): Auftraggeber[];
+  getAuftraggeber(id: string): Auftraggeber | undefined;
   getHersteller(id: string): Hersteller | undefined;
   getVariante(pfad: VariantenPfad): Variante | undefined;
   getFlow(pfad: VariantenPfad, flowId: string): Flow | undefined;
 }
 
 export function createRepository(tree: ContentTree): ContentRepository {
-  const getKunde = (id: string) => tree.kunden.find((k) => k.id === id);
+  const getAuftraggeber = (id: string) => tree.auftraggeber.find((k) => k.id === id);
   const getVariante = (p: VariantenPfad) =>
-    getKunde(p.kunde)
-      ?.bereiche.find((b) => b.id === p.bereich)
+    getAuftraggeber(p.auftraggeber)
+      ?.kunden.find((b) => b.id === p.kunde)
       ?.systeme.find((s) => s.id === p.system)
       ?.varianten.find((v) => v.id === p.variante);
 
   return {
-    getKunden: () => tree.kunden.filter((k) => k.aktiv),
-    getKunde,
+    getAlleAuftraggeber: () => tree.auftraggeber.filter((k) => k.aktiv),
+    getAuftraggeber,
     getHersteller: (id) => tree.hersteller.find((h) => h.id === id),
     getVariante,
     getFlow: (p, flowId) => getVariante(p)?.flows[flowId],

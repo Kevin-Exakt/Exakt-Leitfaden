@@ -1,0 +1,9 @@
+# Auftraggeber Pan Oston – Vorgaben für alle Pan-Oston-Einsätze.
+# Kunden (z. B. Lidl) liegen als Unterordner darunter.
+name: Pan Oston
+aktiv: true
+
+# Step 6 (Abmeldung) und Step 7 (Dokumentation) laufen über die bestehende Exakt-Service-Anwendung.
+links:
+  abmeldung: https://bericht.service-exakt.de/
+  dokumentation: https://bericht.service-exakt.de/

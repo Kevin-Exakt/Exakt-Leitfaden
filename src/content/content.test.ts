@@ -19,13 +19,16 @@ describe("Inhalte unter content/", () => {
     expect(alle.filter((p) => p.schwere === "fehler")).toEqual([]);
   });
 
-  it("enthalten den Piloten Lidl → Zigarettenträger → NERA", () => {
+  it("enthalten alle Auftraggeber und den Piloten Pan Oston → Lidl → Zigarettenträger → NERA", () => {
     const repo = createRepository(tree);
-    const pfad = { kunde: "lidl", bereich: "service", system: "zigarettentraeger", variante: "nera" };
+    expect(repo.getAlleAuftraggeber().map((k) => k.name)).toEqual(["InstaServe", "Iris", "Pan Oston", "Retec", "Rowius"]);
+    expect(repo.getAuftraggeber("lidl")).toBeUndefined();
+    expect(repo.getAuftraggeber("pan-oston")?.kunden.find((b) => b.id === "lidl")?.ankunft?.checkliste).toHaveLength(3);
+    const pfad = { auftraggeber: "pan-oston", kunde: "lidl", system: "zigarettentraeger", variante: "nera" };
     const nera = repo.getVariante(pfad);
     expect(nera?.hersteller).toBe("nera");
     expect(repo.getFlow(pfad, "faehrt-nicht-auf")?.typ).toBe("diagnose");
-    expect(repo.getKunde("lidl")?.links.dokumentation).toBe("https://bericht.service-exakt.de/");
+    expect(repo.getAuftraggeber("pan-oston")?.links.dokumentation).toBe("https://bericht.service-exakt.de/");
   });
 });
 
@@ -41,9 +44,9 @@ describe("Laden & Querverweise", () => {
 
   const minimal = {
     "hersteller.yaml": "hersteller:\n  - { id: nera, name: NERA }\n",
-    "k/kunde.yaml":
+    "k/auftraggeber.yaml":
       "name: K\nlinks: { abmeldung: 'https://a.de', dokumentation: 'https://a.de' }\nankunft: {}\n",
-    "k/b/bereich.yaml": "name: B\n",
+    "k/b/kunde.yaml": "name: B\n",
     "k/b/s/system.yaml": "name: S\n",
     "k/b/s/v/vorbereitung.yaml": "werkzeug: []\n",
     "k/b/s/v/abl/test.yaml":

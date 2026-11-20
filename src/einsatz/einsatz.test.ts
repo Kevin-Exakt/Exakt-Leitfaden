@@ -23,13 +23,14 @@ import {
 } from "./einsatz";
 import { EngineFehler } from "../engine/run";
 
-const pfad = { kunde: "lidl", bereich: "service", system: "zigarettentraeger", variante: "nera" };
+const pfad = { auftraggeber: "pan-oston", kunde: "lidl", system: "zigarettentraeger", variante: "nera" };
 const repo = createRepository(loadContent(path.join(process.cwd(), "content")).tree);
 const variante = repo.getVariante(pfad)!;
-const kunde = repo.getKunde("lidl")!;
+const auftraggeber = repo.getAuftraggeber("pan-oston")!;
+const ankunft = auftraggeber.kunden.find((b) => b.id === "lidl")!.ankunft ?? auftraggeber.ankunft;
 const k: Kontext = {
   variante,
-  ankunftPflicht: kunde.ankunft.checkliste.filter((c) => c.pflicht).map((c) => c.id),
+  ankunftPflicht: ankunft.checkliste.filter((c) => c.pflicht).map((c) => c.id),
 };
 
 /** Beantwortet mehrere Fragen im aktuellen Ablauf. */

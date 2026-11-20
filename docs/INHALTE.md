@@ -11,10 +11,11 @@ Im Pull Request läuft sie automatisch.
 ```
 content/
 ├─ hersteller.yaml                         alle Hersteller (ITAB, NERA, Kesseböhmer …)
-└─ lidl/                                   Kunde (Ordnername = ID)
-   ├─ kunde.yaml                           Links Abmeldung/Doku, Ankunft-Checkliste
-   └─ service/                             Servicebereich
-      ├─ bereich.yaml
+├─ instaserve/ iris/ retec/ rowius/       weitere Auftraggeber (je eine auftraggeber.yaml)
+└─ pan-oston/                              Auftraggeber (Ordnername = ID)
+   ├─ auftraggeber.yaml                    Name, Links Abmeldung/Doku, optional Ankunft
+   └─ lidl/                                Kunde des Auftraggebers
+      ├─ kunde.yaml                        Name, optional eigene Ankunft-Checkliste
       └─ zigarettentraeger/                System
          ├─ system.yaml
          └─ nera/                          Hersteller-Variante
@@ -28,6 +29,14 @@ content/
 
 **IDs** (Ordner, Dateinamen, `id:`-Felder): nur Kleinbuchstaben, Ziffern, Bindestriche.
 Umlaute ausschreiben: `faehrt-nicht-auf`, `kessebohmer`.
+
+**Neuen Auftraggeber anlegen:** Ordner unter `content/` mit `auftraggeber.yaml` (`name`, `links`).
+Erscheint sofort in der Auftraggeber-Auswahl.
+
+**Neuen Kunden anlegen:** Ordner unter dem Auftraggeber mit `kunde.yaml` (`name`).
+
+**Ankunft (Step 2):** Steht `ankunft:` in `kunde.yaml`, gilt sie für diesen Kunden
+(z. B. Anmeldung im Lidl-Markt). Sonst gilt `ankunft:` aus `auftraggeber.yaml`.
 
 **Neuen Hersteller anlegen:** Ordner `nera/` kopieren, umbenennen (z. B. `itab/`),
 `hersteller:` in `variante.yaml` anpassen, Inhalte ersetzen.
@@ -53,7 +62,7 @@ knoten:
       - typ: text
         text: Ausführliche Prüfanleitung …
       - typ: bild
-        src: /medien/lidl/nera/steuereinheit.jpg
+        src: /medien/pan-oston/lidl/nera/steuereinheit.jpg
         alt: Steuereinheit von vorne
     antworten:
       - { label: "Ja",   typ: ja,   weiter: motor-dreht }
@@ -103,8 +112,8 @@ pflicht:
 | `video`, `pdf` | `titel`, `src` (`/medien/…` oder `https://…`) |
 | `sollwert` | `bezeichnung`, `wert`, optional `einheit` |
 
-Mediendateien liegen unter `public/medien/` (z. B. `public/medien/lidl/nera/motor.jpg`,
-im Inhalt dann `src: /medien/lidl/nera/motor.jpg`).
+Mediendateien liegen unter `public/medien/` (z. B. `public/medien/pan-oston/lidl/nera/motor.jpg`,
+im Inhalt dann `src: /medien/pan-oston/lidl/nera/motor.jpg`).
 
 ### Rückwärtsverfahren
 

@@ -3,7 +3,9 @@
 Interaktive Service-Webapp für Techniker von **Exakt-Service**. Führt Techniker Schritt für Schritt
 durch einen Serviceeinsatz (Vorbereitung → Ankunft → Fehleraufnahme → Funktionstest → Diagnose →
 Reparatur → Nachtest → Abmeldung/Doku) und bietet dem Innendienst eine vollständige Handbuchansicht.
-Erster Kunde: **Lidl**, Pilot: **Zigarettenträger → NERA**.
+Auftraggeber: Pan Oston, Rowius, Retec, Iris, InstaServe. Pilot: **Pan Oston → Lidl → Zigarettenträger → NERA**.
+Hierarchie: **Auftraggeber** (Pan Oston) → **Kunde** (Lidl) → System → Hersteller-Variante.
+Im Code heißen die Ebenen genauso: `auftraggeber`, `kunde`, `system`, `variante`.
 
 Vollständiges Konzept: `docs/KONZEPT.md` (Abschnitt 0 = getroffene Entscheidungen).
 Inhalte schreiben: `docs/INHALTE.md`.
@@ -13,7 +15,7 @@ Inhalte schreiben: `docs/INHALTE.md`.
 - Kein Login, kein Offline-Modus, keine Fotoaufnahme. Frei zugänglich mit Link, aber `noindex`.
 - Nur Deutsch. Code-Bezeichner fachlich auf Deutsch (Knoten, Antwort, Verlauf …), technische auf Englisch ok.
 - Firmenfarbe Gelb `#FACC15` (Hover `#EAB308`), Text darauf `#111827`. Gelb nie als Schrift auf Weiß.
-- Abmeldung und Dokumentation: Link aus `content/<kunde>/kunde.yaml` (`https://bericht.service-exakt.de/`).
+- Abmeldung und Dokumentation: Link aus `content/<auftraggeber>/auftraggeber.yaml` (`https://bericht.service-exakt.de/`).
 - Keine Datenbank. Inhalte sind YAML-Dateien unter `content/`. Einsatz-Zustand nur im Browser.
 
 ## Architektur
