@@ -1,16 +1,17 @@
 "use client";
 /**
- * Geführter Serviceeinsatz (Step 1–7) für eine Variante, z. B. Lidl → Zigarettenträger → NERA.
+ * Geführter Leitfaden (Step 1–7) für eine Variante, z. B. Lidl → Zigarettenträger → NERA.
  * Die gesamte Ablauflogik liegt in src/einsatz/einsatz.ts – hier wird nur angezeigt und gespeichert.
  */
 import { useRouter } from "next/navigation";
-import { CircleCheck, ExternalLink, OctagonAlert, PlayCircle, RotateCcw, Trash2, TriangleAlert } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { CircleCheck, ExternalLink, OctagonAlert, RotateCcw, Trash2, TriangleAlert } from "lucide-react";
 import type { Block, ListenEintrag, Variante } from "@/src/content/schema";
 import { stand } from "@/src/engine/run";
 import * as E from "@/src/einsatz/einsatz";
 import { useEinsatz } from "@/src/einsatz/speicher";
-import { Button, ButtonExtern } from "../ui/Button";
-import { Abschnitt, EntwurfBadge, Karte } from "../ui/Karte";
+import { Button, ButtonExtern, ButtonLink } from "../ui/Button";
+import { Karte } from "../ui/Karte";
 import { Aktionsleiste } from "../ui/Rahmen";
 import { EinsatzKopf } from "./EinsatzKopf";
 import { FlowAnsicht } from "./FlowAnsicht";
@@ -25,71 +26,76 @@ export type EinsatzAppProps = {
     links: { abmeldung: string; dokumentation: string };
     ankunft: { hinweise: Block[]; checkliste: ListenEintrag[] };
   };
+  /** Startseite des Auftraggebers (nach Abschluss/Abbruch). */
   startUrl: string;
+  /** System-/Herstellerauswahl (Zurück aus Schritt 1). */
+  auswahlUrl: string;
 };
 
+/** Der Leitfaden startet sofort – kein eigener Startknopf. */
 export function EinsatzApp(props: EinsatzAppProps) {
   const [einsatz, setzen] = useEinsatz();
   const { pfad } = props;
 
-  if (einsatz === undefined) {
-    return <div className="flex-1 animate-pulse p-4 text-text-leise">Lade Einsatz …</div>;
+  // Kein Leitfaden auf dem Gerät → beim Öffnen der Seite direkt mit Schritt 1 beginnen.
+  // Nur einmal: Nach „Schließen“/„Abbrechen“ darf nicht sofort ein neuer entstehen.
+  const automatischGestartet = useRef(false);
+  useEffect(() => {
+    if (einsatz) automatischGestartet.current = true; // es gab schon einen Leitfaden (z. B. nach Neuladen)
+    else if (einsatz === null && !automatischGestartet.current) {
+      automatischGestartet.current = true;
+      setzen(E.neuerEinsatz(pfad));
+    }
+  }, [einsatz, pfad, setzen]);
+
+  if (!einsatz) {
+    return <div className="flex-1 animate-pulse p-4 text-text-leise">Lade Leitfaden …</div>;
   }
 
   const gehoertHierher =
-    einsatz &&
     einsatz.pfad.auftraggeber === pfad.auftraggeber &&
     einsatz.pfad.kunde === pfad.kunde &&
     einsatz.pfad.system === pfad.system &&
     einsatz.pfad.variante === pfad.variante;
 
-  if (!einsatz || !gehoertHierher) {
-    return <EinsatzStarten {...props} laufender={einsatz} onStart={() => setzen(E.neuerEinsatz(pfad))} />;
+  if (!gehoertHierher) {
+    return <AndererLeitfaden laufender={einsatz} onNeu={() => setzen(E.neuerEinsatz(pfad))} />;
   }
 
   return <EinsatzLauf {...props} einsatz={einsatz} setzen={setzen} />;
 }
 
-function EinsatzStarten({ bezeichnung, variante, laufender, onStart }: EinsatzAppProps & {
-  laufender: E.Einsatz | null;
-  onStart: () => void;
-}) {
+/** Auf dem Gerät ist noch ein anderer Leitfaden offen. */
+function AndererLeitfaden({ laufender, onNeu }: { laufender: E.Einsatz; onNeu: () => void }) {
+  const p = laufender.pfad;
+  const info = E.schrittInfo(laufender.schritt);
   return (
     <>
       <main className="flex-1 space-y-5 px-4 py-5">
-        <Karte className="space-y-1">
-          <p className="text-sm text-text-leise">{bezeichnung.auftraggeber}</p>
-          <h1 className="text-2xl font-bold">{bezeichnung.system}</h1>
-          <p className="text-lg">Hersteller: {bezeichnung.hersteller}</p>
-          {variante.status === "entwurf" && <div className="pt-2"><EntwurfBadge /></div>}
-        </Karte>
-        <Abschnitt titel="Ablauf">
-          <ol className="space-y-1 text-text-leise">
-            {["1 Vorbereitung", "2 Ankunft", "2.1 Fehleraufnahme", "3 Funktionstest", "3.1 Fehleranalyse", "4 Reparatur", "5 Funktionstest", "6 Abmeldung", "7 Dokumentation"].map((s) => (
-              <li key={s}>{s}</li>
-            ))}
-          </ol>
-        </Abschnitt>
-        {laufender && (
-          <div role="alert" className="flex gap-3 rounded-xl border-2 border-orange-300 bg-warnung-hell p-3 text-orange-950">
-            <TriangleAlert className="mt-0.5 size-5 shrink-0 text-warnung" aria-hidden />
+        <div role="alert" className="flex gap-3 rounded-xl border-2 border-orange-300 bg-warnung-hell p-4 text-orange-950">
+          <TriangleAlert className="mt-0.5 size-6 shrink-0 text-warnung" aria-hidden />
+          <div className="space-y-1">
+            <p className="text-lg font-semibold">Es ist noch ein anderer Leitfaden offen</p>
             <p>
-              Auf diesem Gerät läuft noch ein Einsatz ({laufender.pfad.system} / {laufender.pfad.variante}). Ein neuer Start
-              verwirft ihn.
+              {p.kunde} · {p.system} · {p.variante} – Schritt {info.nummer} {info.titel}
             </p>
+            <p>Wird hier neu begonnen, gehen dessen Eingaben verloren.</p>
           </div>
-        )}
+        </div>
       </main>
       <Aktionsleiste>
-        <Button variante="primaer" breit icon={<PlayCircle className="size-6" />} onClick={onStart}>
-          {laufender ? "Verwerfen und neu starten" : "Einsatz starten"}
+        <ButtonLink href={`/${p.auftraggeber}/${p.kunde}/${p.system}/${p.variante}`} variante="primaer" breit>
+          Offenen Leitfaden fortsetzen
+        </ButtonLink>
+        <Button variante="gefahr" gross={false} breit onClick={onNeu}>
+          Verwerfen und hier neu beginnen
         </Button>
       </Aktionsleiste>
     </>
   );
 }
 
-function EinsatzLauf({ einsatz: e, setzen, variante: v, auftraggeber, bezeichnung, startUrl }: EinsatzAppProps & {
+function EinsatzLauf({ einsatz: e, setzen, variante: v, auftraggeber, bezeichnung, startUrl, auswahlUrl }: EinsatzAppProps & {
   einsatz: E.Einsatz;
   setzen: (e: E.Einsatz | null) => void;
 }) {
@@ -118,7 +124,8 @@ function EinsatzLauf({ einsatz: e, setzen, variante: v, auftraggeber, bezeichnun
 
   const zurueck = () => {
     if (lauf && (e.laeufe[lauf.slot]?.length ?? 0) > 0) aendern((x) => E.laufZurueck(x, v));
-    else aendern(E.schrittZurueck);
+    else if (e.historie.length > 0) aendern(E.schrittZurueck);
+    else router.push(auswahlUrl); // Schritt 1: zurück zur Auswahl, Fortschritt bleibt gespeichert
   };
 
   const namen = Object.fromEntries(
@@ -137,7 +144,7 @@ function EinsatzLauf({ einsatz: e, setzen, variante: v, auftraggeber, bezeichnun
       unterzeile={unterzeile}
       position={info.position}
       onZurueck={zurueck}
-      zurueckMoeglich={e.historie.length > 0 || (lauf ? (e.laeufe[lauf.slot]?.length ?? 0) > 0 : false)}
+      zurueckMoeglich
       menue={(schliessen) => (
         <>
           <Zusammenfassung text={zusammenfassung} />
@@ -147,14 +154,14 @@ function EinsatzLauf({ einsatz: e, setzen, variante: v, auftraggeber, bezeichnun
             breit
             icon={<Trash2 className="size-4" />}
             onClick={() => {
-              if (window.confirm("Einsatz wirklich abbrechen? Alle Eingaben auf diesem Gerät werden gelöscht.")) {
+              if (window.confirm("Leitfaden wirklich abbrechen? Alle Eingaben auf diesem Gerät werden gelöscht.")) {
                 schliessen();
                 setzen(null);
                 router.push(startUrl);
               }
             }}
           >
-            Einsatz abbrechen und löschen
+            Leitfaden abbrechen und löschen
           </Button>
         </>
       )}
@@ -268,7 +275,7 @@ function EinsatzLauf({ einsatz: e, setzen, variante: v, auftraggeber, bezeichnun
             {E.offeneFehlerbilder(e).length > 1 ? "Weiter zum nächsten Fehlerbild" : "Weiter zum Funktionstest"}
           </Button>
           <Button variante="gefahr" gross={false} breit onClick={() => aendern(E.nichtErfolgreichBeenden)}>
-            Einsatz als nicht erfolgreich beenden
+            Als nicht erfolgreich abschließen
           </Button>
         </>
       );
@@ -344,7 +351,7 @@ function EinsatzLauf({ einsatz: e, setzen, variante: v, auftraggeber, bezeichnun
           <Karte className="space-y-2 border-ok bg-ok-hell text-center">
             <CircleCheck className="mx-auto size-12 text-ok" aria-hidden />
             <p className="text-2xl font-bold">Serviceablauf abgeschlossen</p>
-            <p className="text-text-leise">Vielen Dank. Der Einsatz kann jetzt beendet werden.</p>
+            <p className="text-text-leise">Vielen Dank. Der Leitfaden kann jetzt geschlossen werden.</p>
           </Karte>
           <ErgebnisBanner ergebnis={e.ergebnis} />
         </>
@@ -358,7 +365,7 @@ function EinsatzLauf({ einsatz: e, setzen, variante: v, auftraggeber, bezeichnun
             router.push(startUrl);
           }}
         >
-          Einsatz beenden
+          Leitfaden schließen
         </Button>
       );
       break;
@@ -386,7 +393,7 @@ function ErgebnisAktionen({ e, v, ergebnis, zusammenfassung, weiter, aendern }: 
   const s = e.schritt;
   const nichtErfolgreich = (
     <Button variante="gefahr" gross={false} breit onClick={() => aendern(E.nichtErfolgreichBeenden)}>
-      Einsatz als nicht erfolgreich beenden
+      Als nicht erfolgreich abschließen
     </Button>
   );
   const weiterLabel = () => {
@@ -492,7 +499,7 @@ function ErgebnisBanner({ ergebnis }: { ergebnis: E.Einsatz["ergebnis"] }) {
       <div role="alert" className="flex gap-3 rounded-xl border-2 border-red-300 bg-sicherheit-hell p-4 text-red-950">
         <OctagonAlert className="mt-0.5 size-6 shrink-0 text-sicherheit" aria-hidden />
         <p>
-          <strong>Einsatz nicht erfolgreich.</strong> Bitte im Bericht dokumentieren, was durchgeführt wurde und was offen ist.
+          <strong>Nicht erfolgreich abgeschlossen.</strong> Bitte im Bericht dokumentieren, was durchgeführt wurde und was offen ist.
         </p>
       </div>
     );

@@ -7,9 +7,9 @@ export function generateStaticParams() {
   return variantenParams();
 }
 
-export const metadata = { title: "Einsatz" };
+export const metadata = { title: "Leitfaden" };
 
-export default async function EinsatzSeite({ params }: PageProps<"/[auftraggeber]/einsatz/[kunde]/[system]/[variante]">) {
+export default async function LeitfadenSeite({ params }: PageProps<"/[auftraggeber]/[kunde]/[system]/[variante]">) {
   const p = await params;
   const eintrag = alleVarianten().find(
     (x) => x.auftraggeber === p.auftraggeber && x.kunde === p.kunde && x.system === p.system && x.variante === p.variante,
@@ -29,6 +29,7 @@ export default async function EinsatzSeite({ params }: PageProps<"/[auftraggeber
         variante={eintrag.v}
         auftraggeber={{ links: auftraggeber.links, ankunft: eintrag.ankunft }}
         startUrl={`/${auftraggeber.id}`}
+        auswahlUrl={`/${auftraggeber.id}/${p.kunde}`}
       />
     </div>
   );

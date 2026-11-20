@@ -16,7 +16,10 @@ Inhalte schreiben: `docs/INHALTE.md`.
 - Nur Deutsch. Code-Bezeichner fachlich auf Deutsch (Knoten, Antwort, Verlauf …), technische auf Englisch ok.
 - Firmenfarbe Gelb `#FACC15` (Hover `#EAB308`), Text darauf `#111827`. Gelb nie als Schrift auf Weiß.
 - Abmeldung und Dokumentation: Link aus `content/<auftraggeber>/auftraggeber.yaml` (`https://bericht.service-exakt.de/`).
-- Keine Datenbank. Inhalte sind YAML-Dateien unter `content/`. Einsatz-Zustand nur im Browser.
+- Keine Datenbank. Inhalte sind YAML-Dateien unter `content/`. Leitfaden-Fortschritt nur im Browser.
+- Kein „Service starten“: Auftraggeber → Kunde → System → Hersteller, danach startet sofort der
+  geführte Leitfaden (Step 1–7). URLs: `/[auftraggeber]/[kunde]/[system]/[variante]`. Im Code heißt
+  ein laufender Leitfaden weiterhin `Einsatz`.
 
 ## Architektur
 

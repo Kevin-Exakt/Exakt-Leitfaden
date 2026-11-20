@@ -7,9 +7,8 @@ export function generateStaticParams() {
   return kundenParams();
 }
 
-export const metadata = { title: "Service starten" };
-
-export default async function SystemWaehlen({ params }: PageProps<"/[auftraggeber]/einsatz/[kunde]">) {
+/** Kunde → System und Hersteller wählen. */
+export default async function SystemWaehlen({ params }: PageProps<"/[auftraggeber]/[kunde]">) {
   const p = await params;
   const treffer = findeKunde(p.auftraggeber, p.kunde);
   if (!treffer) notFound();
@@ -20,11 +19,11 @@ export default async function SystemWaehlen({ params }: PageProps<"/[auftraggebe
         <Kopf
           titel={auftraggeber.kunden.length === 1 ? auftraggeber.name : `${auftraggeber.name} · ${kunde.name}`}
           unterzeile="System und Hersteller wählen"
-          zurueck={`/${auftraggeber.id}/einsatz`}
+          zurueck={`/${auftraggeber.id}`}
         />
       }
     >
-      <SystemAuswahl kunde={kunde} basis={`/${auftraggeber.id}/einsatz/${kunde.id}`} />
+      <SystemAuswahl kunde={kunde} basis={`/${auftraggeber.id}/${kunde.id}`} />
     </Seite>
   );
 }
