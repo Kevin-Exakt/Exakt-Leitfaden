@@ -72,7 +72,8 @@ export function neuerEinsatz(pfad: Einsatz["pfad"], jetzt = new Date()): Einsatz
     id: `${jetzt.getTime().toString(36)}-${Math.random().toString(36).slice(2, 7)}`,
     pfad,
     gestartetAm: jetzt.toISOString(),
-    schritt: { typ: "vorbereitung" },
+    // Leitfaden beginnt direkt mit der Auswahl des Fehlerbilds (Vorbereitung/Ankunft entfallen)
+    schritt: { typ: "aufnahme" },
     historie: [],
     vorbereitung: [],
     ankunft: [],
@@ -407,23 +408,23 @@ export function schrittZurueck(e: Einsatz): Einsatz {
 /* ------------------------------------------------------------------ */
 
 export const SCHRITT_INFO: Record<Schritt["typ"], { nummer: string; titel: string; position: number }> = {
-  vorbereitung: { nummer: "1", titel: "Vorbereitung", position: 0 },
+  vorbereitung: { nummer: "–", titel: "Vorbereitung (entfällt)", position: 0 },
   ankunft: { nummer: "–", titel: "Ankunft (entfällt)", position: 0 },
-  aufnahme: { nummer: "2", titel: "Fehleraufnahme", position: 1 },
-  funktionstest: { nummer: "3", titel: "Funktionstest", position: 2 },
-  diagnose: { nummer: "3.1", titel: "Fehleranalyse", position: 3 },
-  reparatur: { nummer: "4", titel: "Reparatur", position: 4 },
-  nachtest: { nummer: "5", titel: "Funktionstest nach Reparatur", position: 5 },
-  restfehler: { nummer: "5", titel: "Weitere Fehlerbilder", position: 5 },
-  abmeldung: { nummer: "6", titel: "Abmeldung", position: 6 },
-  dokumentation: { nummer: "7", titel: "Dokumentation", position: 7 },
-  abgeschlossen: { nummer: "✓", titel: "Abgeschlossen", position: 8 },
+  aufnahme: { nummer: "1", titel: "Fehlerbild", position: 0 },
+  funktionstest: { nummer: "2", titel: "Funktionstest", position: 1 },
+  diagnose: { nummer: "3", titel: "Fehleranalyse", position: 2 },
+  reparatur: { nummer: "4", titel: "Reparatur", position: 3 },
+  nachtest: { nummer: "5", titel: "Funktionstest nach Reparatur", position: 4 },
+  restfehler: { nummer: "5", titel: "Weitere Fehlerbilder", position: 4 },
+  abmeldung: { nummer: "6", titel: "Abmeldung", position: 5 },
+  dokumentation: { nummer: "7", titel: "Dokumentation", position: 6 },
+  abgeschlossen: { nummer: "✓", titel: "Abgeschlossen", position: 7 },
 };
-export const ANZAHL_POSITIONEN = 8;
+export const ANZAHL_POSITIONEN = 7;
 
 export function schrittInfo(s: Schritt) {
   const info = SCHRITT_INFO[s.typ];
-  if (s.typ === "diagnose" && s.verfahren === "rueckwaerts") return { ...info, nummer: "3.2", titel: "Rückwärtsverfahren" };
+  if (s.typ === "diagnose" && s.verfahren === "rueckwaerts") return { ...info, nummer: "3.1", titel: "Rückwärtsverfahren" };
   return info;
 }
 
