@@ -13,8 +13,8 @@ export type Problem = {
 
 export const ERLAUBTE_ERGEBNISSE: Record<FlowTyp, readonly ErgebnisTyp[]> = {
   funktionstest: ["bestanden", "nicht-bestanden", "teilweise", "eskalation"],
-  diagnose: ["reparatur", "behoben", "kein-befund", "eskalation"],
-  rueckwaerts: ["reparatur", "behoben", "kein-befund", "eskalation"],
+  diagnose: ["reparatur", "behoben", "in-ordnung", "kein-befund", "eskalation"],
+  rueckwaerts: ["reparatur", "behoben", "in-ordnung", "kein-befund", "eskalation"],
   reparatur: ["abgeschlossen", "eskalation"],
 };
 

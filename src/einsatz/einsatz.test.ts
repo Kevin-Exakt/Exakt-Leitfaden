@@ -188,3 +188,42 @@ describe("Einsatzablauf", () => {
     expect(e.protokoll).toHaveLength(1);
   });
 });
+
+describe("Lidl → Zigarettenträger → ITAB: 15-Sekunden-Modus", () => {
+  const pfadItab = { ...pfad, variante: "itab" };
+  const itab = repo.getVariante(pfadItab)!;
+  const kItab: Kontext = { ...k, variante: itab };
+  const antw = (e: Einsatz, ...ids: string[]) => ids.reduce((acc, id) => antworten(acc, itab, id), e);
+
+  /** Vorbereitung (leer), Ankunft, Fehlerbild wählen, allgemeiner Funktionstest „Nein“. */
+  function bisDiagnose(): Einsatz {
+    let e = weiter(neuerEinsatz(pfadItab), kItab);
+    for (const id of kItab.ankunftPflicht) e = checkUmschalten(e, "ankunft", id);
+    e = weiter(e, kItab);
+    e = weiter(fehlerbildUmschalten(e, "15-sekunden-modus-nicht-aktiv"), kItab);
+    expect(aktiverLauf(e, itab)?.flow.id).toBe("standard-funktionstest");
+    return weiter(antw(e, "nein"), kItab);
+  }
+
+  it("Ja → in Ordnung, Fehlerbild erledigt, weiter zum Nachtest", () => {
+    let e = bisDiagnose();
+    expect(e.schritt).toMatchObject({ typ: "diagnose", fehlerbild: "15-sekunden-modus-nicht-aktiv" });
+    e = weiter(antw(e, "ja"), kItab);
+    expect(e.fehlerbildStatus["15-sekunden-modus-nicht-aktiv"]).toBe("nicht-mehr-vorhanden");
+    expect(e.schritt.typ).toBe("nachtest");
+  });
+
+  it("Nein + Instore Communication verbaut → kein Fehler", () => {
+    const e = antw(bisDiagnose(), "nein", "ja");
+    expect(aktiverLauf(e, itab) && e.laeufe).toBeTruthy();
+    expect(weiter(e, kItab).fehlerbildStatus["15-sekunden-modus-nicht-aktiv"]).toBe("nicht-mehr-vorhanden");
+  });
+
+  it("Nein + kein Instore Communication → DIP-Schalter → behoben bzw. Innendienst", () => {
+    const e = antw(bisDiagnose(), "nein", "nein");
+    const behoben = weiter(antw(e, "schliesst-jetzt"), kItab);
+    expect(behoben.fehlerbildStatus["15-sekunden-modus-nicht-aktiv"]).toBe("behoben");
+    const eskaliert = weiter(antw(e, "schliesst-weiterhin-nicht"), kItab);
+    expect(eskaliert.fehlerbildStatus["15-sekunden-modus-nicht-aktiv"]).toBe("eskaliert");
+  });
+});

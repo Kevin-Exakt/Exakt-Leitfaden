@@ -63,7 +63,7 @@ function validateVariante(
     probleme.push({
       schwere: "warnung",
       ort: varianteOrt,
-      meldung: "Leitfaden in Arbeit: Fehlerbilder sind angelegt, aber noch kein \"funktionstest\" – die App zeigt „Leitfaden folgt“.",
+      meldung: "Leitfaden in Arbeit: noch kein eigener \"funktionstest\" – die App nutzt den allgemeinen Funktionstest.",
     });
   verweis(varianteOrt, "nachtest", v.nachtest, "funktionstest");
 

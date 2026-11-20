@@ -397,7 +397,7 @@ function ErgebnisAktionen({ e, v, ergebnis, zusammenfassung, weiter, aendern }: 
     </Button>
   );
   const weiterLabel = () => {
-    if (s.typ === "diagnose" && (ergebnis.ergebnis === "eskalation" || ergebnis.ergebnis === "kein-befund"))
+    if (s.typ === "diagnose" && ["eskalation", "kein-befund", "in-ordnung"].includes(ergebnis.ergebnis))
       return E.offeneFehlerbilder(e).length > 1 ? "Weiter zum nächsten Fehlerbild" : "Weiter zum Funktionstest";
     return undefined;
   };
@@ -458,6 +458,12 @@ function ErgebnisAktionen({ e, v, ergebnis, zusammenfassung, weiter, aendern }: 
         return (
           <Button variante="primaer" breit onClick={weiter}>
             Weiter zum Funktionstest
+          </Button>
+        );
+      if (ergebnis.ergebnis === "in-ordnung")
+        return (
+          <Button variante="primaer" breit onClick={weiter}>
+            {weiterLabel()}
           </Button>
         );
       return (
