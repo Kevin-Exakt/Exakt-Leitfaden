@@ -183,30 +183,27 @@ describe("Lidl → Zigarettenträger → ITAB: 15-Sekunden-Modus", () => {
   const kItab: Kontext = { ...k, variante: itab };
   const antw = (e: Einsatz, ...ids: string[]) => ids.reduce((acc, id) => antworten(acc, itab, id), e);
 
-  /** Fehlerbild wählen, allgemeiner Funktionstest „Nein“. */
+  /** Fehlerbild wählen → ohne eigenen Funktionstest direkt in die Fehleranalyse. */
   function bisDiagnose(): Einsatz {
-    let e = neuerEinsatz(pfadItab);
-    e = weiter(fehlerbildUmschalten(e, "15-sekunden-modus-nicht-aktiv"), kItab);
-    expect(aktiverLauf(e, itab)?.flow.id).toBe("standard-funktionstest");
-    return weiter(antw(e, "nein"), kItab);
+    const e = weiter(fehlerbildUmschalten(neuerEinsatz(pfadItab), "15-sekunden-modus-nicht-aktiv"), kItab);
+    expect(e.schritt).toMatchObject({ typ: "diagnose", fehlerbild: "15-sekunden-modus-nicht-aktiv" });
+    return e;
   }
 
-  it("Ja → in Ordnung, Fehlerbild erledigt, weiter zum Nachtest", () => {
-    let e = bisDiagnose();
-    expect(e.schritt).toMatchObject({ typ: "diagnose", fehlerbild: "15-sekunden-modus-nicht-aktiv" });
-    e = weiter(antw(e, "ja"), kItab);
-    expect(e.fehlerbildStatus["15-sekunden-modus-nicht-aktiv"]).toBe("nicht-mehr-vorhanden");
+  it("überspringt den allgemeinen Funktionstest vor der Analyse, nicht aber den Nachtest", () => {
+    const e = weiter(antw(bisDiagnose(), "ja"), kItab);
+    expect(e.historie.map((h) => h.typ)).toEqual(["aufnahme", "diagnose"]);
     expect(e.schritt.typ).toBe("nachtest");
+    expect(aktiverLauf(e, itab)?.flow.id).toBe("standard-funktionstest");
   });
 
-  it("Nein + Instore Communication verbaut → kein Fehler", () => {
-    const e = antw(bisDiagnose(), "nein", "ja");
-    expect(aktiverLauf(e, itab) && e.laeufe).toBeTruthy();
-    expect(weiter(e, kItab).fehlerbildStatus["15-sekunden-modus-nicht-aktiv"]).toBe("nicht-mehr-vorhanden");
+  it("Instore Communication verbaut → aktuell nicht möglich, kein Fehler", () => {
+    const e = weiter(antw(bisDiagnose(), "ja"), kItab);
+    expect(e.fehlerbildStatus["15-sekunden-modus-nicht-aktiv"]).toBe("nicht-mehr-vorhanden");
   });
 
-  it("Nein + kein Instore Communication → DIP-Schalter → behoben bzw. Innendienst", () => {
-    const e = antw(bisDiagnose(), "nein", "nein");
+  it("Kein Instore Communication → DIP-Schalter → behoben bzw. Innendienst", () => {
+    const e = antw(bisDiagnose(), "nein");
     const behoben = weiter(antw(e, "schliesst-jetzt"), kItab);
     expect(behoben.fehlerbildStatus["15-sekunden-modus-nicht-aktiv"]).toBe("behoben");
     const eskaliert = weiter(antw(e, "schliesst-weiterhin-nicht"), kItab);
@@ -222,9 +219,7 @@ describe("Lidl → Zigarettenträger → ITAB: schließt nicht komplett", () => 
   const fb = "schliesst-nicht-komplett";
 
   function bisDiagnose(): Einsatz {
-    let e = neuerEinsatz(pfadItab);
-    e = weiter(fehlerbildUmschalten(e, fb), kItab); // → Funktionstest
-    return weiter(antw(e, "nein"), kItab);
+    return weiter(fehlerbildUmschalten(neuerEinsatz(pfadItab), fb), kItab); // → direkt Fehleranalyse
   }
   const knotenNach = (e: Einsatz) => {
     const lauf = aktiverLauf(e, itab)!;
@@ -257,9 +252,9 @@ describe("Direkteinstieg aus der Suche", () => {
   const itab = repo.getVariante({ ...pfad, variante: "itab" })!;
   const kItab: Kontext = { ...k, variante: itab };
 
-  it("startet mit gewähltem Fehlerbild direkt beim Funktionstest", () => {
+  it("startet mit gewähltem Fehlerbild direkt in der Fehleranalyse", () => {
     const e = neuerEinsatzMitFehlerbild({ ...pfad, variante: "itab" }, kItab, "schliesst-nicht-komplett");
-    expect(e.schritt.typ).toBe("funktionstest");
+    expect(e.schritt).toMatchObject({ typ: "diagnose", fehlerbild: "schliesst-nicht-komplett" });
     expect(e.fehlerbilder).toEqual(["schliesst-nicht-komplett"]);
     expect(schrittZurueck(e).schritt.typ).toBe("aufnahme");
   });

@@ -279,7 +279,7 @@ function EinsatzLauf({ einsatz: e, setzen, variante: v, auftraggeber, bezeichnun
         <>
           {!pruefung.ok && <p className="text-center text-sm font-medium text-text-leise">{pruefung.grund}</p>}
           <Button variante="primaer" breit disabled={!pruefung.ok} onClick={weiter}>
-            Weiter zum Funktionstest
+            {v.funktionstest && v.flows[v.funktionstest] ? "Weiter zum Funktionstest" : "Weiter zur Fehleranalyse"}
           </Button>
         </>
       );
