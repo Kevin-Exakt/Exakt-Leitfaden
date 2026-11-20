@@ -77,7 +77,7 @@ describe("Laden & Querverweise", () => {
     const halb = loadContent(
       tempContent({ ...minimal, "k/b/s/v/variante.yaml": "hersteller: nera\nstatus: entwurf\nfehlerbilder: [{ id: f, titel: F }]\n" }),
     );
-    expect(validateContent(halb.tree).map((p) => p.meldung)).toEqual(
+    expect(validateContent(halb.tree).filter((p) => p.schwere === "warnung").map((p) => p.meldung)).toEqual(
       expect.arrayContaining([expect.stringContaining("kein \"funktionstest\"")]),
     );
   });

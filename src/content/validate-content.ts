@@ -60,7 +60,11 @@ function validateVariante(
   const varianteOrt = `${basis}/variante.yaml`;
   verweis(varianteOrt, "funktionstest", v.funktionstest, "funktionstest");
   if (v.fehlerbilder.length > 0 && !v.funktionstest)
-    fehler(varianteOrt, "Fehlerbilder sind angelegt, aber kein \"funktionstest\" – der Leitfaden kann nicht starten.");
+    probleme.push({
+      schwere: "warnung",
+      ort: varianteOrt,
+      meldung: "Leitfaden in Arbeit: Fehlerbilder sind angelegt, aber noch kein \"funktionstest\" – die App zeigt „Leitfaden folgt“.",
+    });
   verweis(varianteOrt, "nachtest", v.nachtest, "funktionstest");
 
   const fehlerbildIds = new Set<string>();
