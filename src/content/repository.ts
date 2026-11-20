@@ -8,6 +8,8 @@
 import path from "node:path";
 import { loadContent } from "./load";
 import type { ContentTree, Flow, Hersteller, Auftraggeber, Variante } from "./schema";
+import { baueSuchindex } from "./suchindex";
+import type { SuchEintrag } from "../suche/suche";
 
 export type VariantenPfad = {
   auftraggeber: string;
@@ -22,6 +24,8 @@ export interface ContentRepository {
   getHersteller(id: string): Hersteller | undefined;
   getVariante(pfad: VariantenPfad): Variante | undefined;
   getFlow(pfad: VariantenPfad, flowId: string): Flow | undefined;
+  /** Schnellsuche auf der Startseite. */
+  getSuchindex(): SuchEintrag[];
 }
 
 export function createRepository(tree: ContentTree): ContentRepository {
@@ -38,6 +42,7 @@ export function createRepository(tree: ContentTree): ContentRepository {
     getHersteller: (id) => tree.hersteller.find((h) => h.id === id),
     getVariante,
     getFlow: (p, flowId) => getVariante(p)?.flows[flowId],
+    getSuchindex: () => baueSuchindex(tree),
   };
 }
 

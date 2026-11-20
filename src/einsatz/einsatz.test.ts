@@ -16,6 +16,7 @@ import {
   keinFehlerFeststellbar,
   type Kontext,
   neuerEinsatz,
+  neuerEinsatzMitFehlerbild,
   nichtErfolgreichBeenden,
   schrittInfo,
   schrittZurueck,
@@ -249,5 +250,21 @@ describe("Lidl → Zigarettenträger → ITAB: schließt nicht komplett", () => 
   it("Nicht 10 cm offen bzw. Relais klickt → Innendienst", () => {
     expect(weiter(antw(bisDiagnose(), "nein"), kItab).fehlerbildStatus[fb]).toBe("eskaliert");
     expect(weiter(antw(bisDiagnose(), "ja", "ja"), kItab).fehlerbildStatus[fb]).toBe("eskaliert");
+  });
+});
+
+describe("Direkteinstieg aus der Suche", () => {
+  const itab = repo.getVariante({ ...pfad, variante: "itab" })!;
+  const kItab: Kontext = { ...k, variante: itab };
+
+  it("startet mit gewähltem Fehlerbild direkt beim Funktionstest", () => {
+    const e = neuerEinsatzMitFehlerbild({ ...pfad, variante: "itab" }, kItab, "schliesst-nicht-komplett");
+    expect(e.schritt.typ).toBe("funktionstest");
+    expect(e.fehlerbilder).toEqual(["schliesst-nicht-komplett"]);
+    expect(schrittZurueck(e).schritt.typ).toBe("aufnahme");
+  });
+
+  it("ignoriert unbekannte Fehlerbilder", () => {
+    expect(neuerEinsatzMitFehlerbild({ ...pfad, variante: "itab" }, kItab, "gibt-es-nicht").schritt.typ).toBe("aufnahme");
   });
 });

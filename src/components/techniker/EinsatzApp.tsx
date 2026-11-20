@@ -35,31 +35,61 @@ export type EinsatzAppProps = {
 /** Der Leitfaden startet sofort – kein eigener Startknopf. */
 export function EinsatzApp(props: EinsatzAppProps) {
   const [einsatz, setzen] = useEinsatz();
-  const { pfad } = props;
+  const { pfad, variante, auftraggeber } = props;
 
-  // Kein Leitfaden auf dem Gerät → beim Öffnen der Seite direkt mit Schritt 1 beginnen.
-  // Nur einmal: Nach „Schließen“/„Abbrechen“ darf nicht sofort ein neuer entstehen.
-  const automatischGestartet = useRef(false);
-  useEffect(() => {
-    if (einsatz) automatischGestartet.current = true; // es gab schon einen Leitfaden (z. B. nach Neuladen)
-    else if (einsatz === null && !automatischGestartet.current) {
-      automatischGestartet.current = true;
-      setzen(E.neuerEinsatz(pfad));
+  // Fehlerbild aus der Schnellsuche (?fehlerbild=…) – einmal lesen, dann aus der Adresse entfernen,
+  // damit Neuladen keinen neuen Leitfaden startet.
+  const fehlerbildAusSuche = useRef<string | null | undefined>(undefined);
+  const leseFehlerbildAusAdresse = () => {
+    if (fehlerbildAusSuche.current !== undefined) return;
+    const url = new URL(window.location.href);
+    fehlerbildAusSuche.current = url.searchParams.get("fehlerbild");
+    if (fehlerbildAusSuche.current) {
+      url.searchParams.delete("fehlerbild");
+      window.history.replaceState(window.history.state, "", url.pathname + url.search);
     }
-  }, [einsatz, pfad, setzen]);
-
-  if (!einsatz) {
-    return <div className="flex-1 animate-pulse p-4 text-text-leise">Lade Leitfaden …</div>;
-  }
+  };
+  const starten = () => {
+    leseFehlerbildAusAdresse();
+    const kontext: E.Kontext = {
+      variante,
+      ankunftPflicht: auftraggeber.ankunft.checkliste.filter((c) => c.pflicht).map((c) => c.id),
+    };
+    const neu = E.neuerEinsatzMitFehlerbild(pfad, kontext, fehlerbildAusSuche.current);
+    fehlerbildAusSuche.current = null; // nur einmal anwenden
+    return neu;
+  };
 
   const gehoertHierher =
+    !!einsatz &&
     einsatz.pfad.auftraggeber === pfad.auftraggeber &&
     einsatz.pfad.kunde === pfad.kunde &&
     einsatz.pfad.system === pfad.system &&
     einsatz.pfad.variante === pfad.variante;
 
+  // Kein Leitfaden auf dem Gerät → beim Öffnen der Seite direkt beginnen.
+  // Nur einmal: Nach „Schließen“/„Abbrechen“ darf nicht sofort ein neuer entstehen.
+  const automatischGestartet = useRef(false);
+  useEffect(() => {
+    if (einsatz === undefined) return; // Speicher noch nicht gelesen
+    leseFehlerbildAusAdresse();
+    if (einsatz === null && !automatischGestartet.current) {
+      automatischGestartet.current = true;
+      setzen(starten());
+    } else if (einsatz) {
+      automatischGestartet.current = true; // es gab schon einen Leitfaden (z. B. nach Neuladen)
+      // Aus der Suche gekommen, hier offener Leitfaden steht noch unberührt bei Schritt 1 → Fehlerbild übernehmen
+      if (gehoertHierher && fehlerbildAusSuche.current && einsatz.schritt.typ === "aufnahme" && !einsatz.fehlerbilder.length)
+        setzen(starten());
+    }
+  });
+
+  if (!einsatz) {
+    return <div className="flex-1 animate-pulse p-4 text-text-leise">Lade Leitfaden …</div>;
+  }
+
   if (!gehoertHierher) {
-    return <AndererLeitfaden laufender={einsatz} onNeu={() => setzen(E.neuerEinsatz(pfad))} />;
+    return <AndererLeitfaden laufender={einsatz} onNeu={() => setzen(starten())} />;
   }
 
   return <EinsatzLauf {...props} einsatz={einsatz} setzen={setzen} />;

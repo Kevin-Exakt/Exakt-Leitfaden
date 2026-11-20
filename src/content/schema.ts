@@ -221,6 +221,8 @@ export const SystemDateiSchema = z.strictObject({
   beschreibung: z.string().optional(),
   /** Feste Position in der Liste (1, 2, 3 …). Ohne Angabe: alphabetisch nach den sortierten. */
   reihenfolge: z.number().int().positive().optional(),
+  /** Abkürzungen für die Suche, z. B. ["ZT"] für Zigarettenträger. */
+  kuerzel: z.array(z.string().min(1)).default([]),
 });
 
 export const FehlerbildSchema = z.strictObject({

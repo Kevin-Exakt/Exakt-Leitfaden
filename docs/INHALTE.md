@@ -54,6 +54,9 @@ Für den Leitfaden einen Ordner `standard/` mit `variante.yaml` **ohne** `herste
 (`status: entwurf`, `funktionstest:`, `fehlerbilder:` …). Kommt später ein Hersteller dazu,
 den Ordner nach dem Hersteller umbenennen und `hersteller:` ergänzen.
 
+**Kürzel für die Suche:** In `system.yaml` z. B. `kuerzel: [ZT]` – dann findet die Suche auf der
+Startseite „ITAB ZT schließt nicht“.
+
 **Reihenfolge der Systeme:** alphabetisch. Feste Reihenfolge mit `reihenfolge: 1`, `2`, … in
 `system.yaml` (z. B. bei Rowius: NEO, WEO, TBA, Phase 1–3).
 
