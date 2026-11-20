@@ -292,7 +292,10 @@ export function weiter(e: Einsatz, k: Kontext): Einsatz {
       // Status für neu gewählte Fehlerbilder anlegen, abgewählte entfernen
       const fehlerbildStatus: Record<string, FehlerbildStatus> = {};
       for (const id of e.fehlerbilder) fehlerbildStatus[id] = e.fehlerbildStatus[id] ?? "offen";
-      return gehe({ ...e, fehlerbildStatus }, { typ: "funktionstest" });
+      // Funktionstest vor der Analyse nur, wenn das System einen eigenen hat –
+      // sonst ist der Fehler mit der Auswahl bereits festgestellt → direkt zur Fehleranalyse.
+      if (v.funktionstest && v.flows[v.funktionstest]) return gehe({ ...e, fehlerbildStatus }, { typ: "funktionstest" });
+      return naechstesFehlerbildOderNachtest({ ...e, fehlerbildStatus }, v);
     }
     case "funktionstest":
       return naechstesFehlerbildOderNachtest(protokolliere(e, v), v);
@@ -411,20 +414,20 @@ export const SCHRITT_INFO: Record<Schritt["typ"], { nummer: string; titel: strin
   vorbereitung: { nummer: "–", titel: "Vorbereitung (entfällt)", position: 0 },
   ankunft: { nummer: "–", titel: "Ankunft (entfällt)", position: 0 },
   aufnahme: { nummer: "1", titel: "Fehlerbild", position: 0 },
-  funktionstest: { nummer: "2", titel: "Funktionstest", position: 1 },
-  diagnose: { nummer: "3", titel: "Fehleranalyse", position: 2 },
-  reparatur: { nummer: "4", titel: "Reparatur", position: 3 },
-  nachtest: { nummer: "5", titel: "Funktionstest nach Reparatur", position: 4 },
-  restfehler: { nummer: "5", titel: "Weitere Fehlerbilder", position: 4 },
-  abmeldung: { nummer: "6", titel: "Abmeldung", position: 5 },
-  dokumentation: { nummer: "7", titel: "Dokumentation", position: 6 },
-  abgeschlossen: { nummer: "✓", titel: "Abgeschlossen", position: 7 },
+  funktionstest: { nummer: "1.1", titel: "Funktionstest", position: 0 },
+  diagnose: { nummer: "2", titel: "Fehleranalyse", position: 1 },
+  reparatur: { nummer: "3", titel: "Reparatur", position: 2 },
+  nachtest: { nummer: "4", titel: "Funktionstest", position: 3 },
+  restfehler: { nummer: "4", titel: "Weitere Fehlerbilder", position: 3 },
+  abmeldung: { nummer: "5", titel: "Abmeldung", position: 4 },
+  dokumentation: { nummer: "6", titel: "Dokumentation", position: 5 },
+  abgeschlossen: { nummer: "✓", titel: "Abgeschlossen", position: 6 },
 };
-export const ANZAHL_POSITIONEN = 7;
+export const ANZAHL_POSITIONEN = 6;
 
 export function schrittInfo(s: Schritt) {
   const info = SCHRITT_INFO[s.typ];
-  if (s.typ === "diagnose" && s.verfahren === "rueckwaerts") return { ...info, nummer: "3.1", titel: "Rückwärtsverfahren" };
+  if (s.typ === "diagnose" && s.verfahren === "rueckwaerts") return { ...info, nummer: "2.1", titel: "Rückwärtsverfahren" };
   return info;
 }
 
