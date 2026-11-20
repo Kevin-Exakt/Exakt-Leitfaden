@@ -49,6 +49,14 @@ startet der Leitfaden.
 **Mehrere Varianten eines Herstellers** (z. B. Kesseböhmer Alt / Neu): je ein Ordner
 (`kessebohmer-alt/`, `kessebohmer-neu/`) mit `hersteller: kessebohmer` und `name: Kesseböhmer Alt`.
 
+**Systeme ohne Hersteller** (z. B. Retec, Rowius): Das System ist in der Liste direkt antippbar.
+Für den Leitfaden einen Ordner `standard/` mit `variante.yaml` **ohne** `hersteller:` anlegen
+(`status: entwurf`, `funktionstest:`, `fehlerbilder:` …). Kommt später ein Hersteller dazu,
+den Ordner nach dem Hersteller umbenennen und `hersteller:` ergänzen.
+
+**Reihenfolge der Systeme:** alphabetisch. Feste Reihenfolge mit `reihenfolge: 1`, `2`, … in
+`system.yaml` (z. B. bei Rowius: NEO, WEO, TBA, Phase 1–3).
+
 **Neuen Hersteller anlegen:** Ordner `nera/` kopieren, umbenennen (z. B. `itab/`),
 `hersteller:` in `variante.yaml` anpassen, Inhalte ersetzen.
 

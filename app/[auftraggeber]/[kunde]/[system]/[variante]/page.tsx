@@ -28,8 +28,8 @@ export default async function LeitfadenSeite({ params }: PageProps<"/[auftraggeb
       <Seite
         kopf={
           <Kopf
-            titel={`${eintrag.systemName} · ${eintrag.herstellerName}`}
-            unterzeile={`${auftraggeber.name} · ${eintrag.kundeName}`}
+            titel={eintrag.titel}
+            unterzeile={auftraggeber.kunden.length === 1 ? auftraggeber.name : `${auftraggeber.name} · ${eintrag.kundeName}`}
             zurueck={auswahlUrl}
           />
         }
@@ -38,7 +38,7 @@ export default async function LeitfadenSeite({ params }: PageProps<"/[auftraggeb
           <FileClock className="size-10 text-text-leise" aria-hidden />
           <p className="text-lg font-semibold">Leitfaden folgt</p>
           <p className="text-text-leise">
-            Für {eintrag.systemName} von {eintrag.herstellerName} ist noch kein Leitfaden hinterlegt. Bei Fragen bitte den
+            Für {eintrag.titel} ist noch kein Leitfaden hinterlegt. Bei Fragen bitte den
             Innendienst kontaktieren.
           </p>
         </div>
@@ -54,9 +54,9 @@ export default async function LeitfadenSeite({ params }: PageProps<"/[auftraggeb
       <EinsatzApp
         pfad={{ auftraggeber: p.auftraggeber, kunde: p.kunde, system: p.system, variante: p.variante }}
         bezeichnung={{
-          auftraggeber: `${auftraggeber.name} · ${eintrag.kundeName}`,
+          auftraggeber: auftraggeber.kunden.length === 1 ? auftraggeber.name : `${auftraggeber.name} · ${eintrag.kundeName}`,
           system: eintrag.systemName,
-          hersteller: eintrag.herstellerName,
+          hersteller: eintrag.herstellerName ?? "",
         }}
         variante={eintrag.v}
         auftraggeber={{ links: auftraggeber.links, ankunft: eintrag.ankunft }}

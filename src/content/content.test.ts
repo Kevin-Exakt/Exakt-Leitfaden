@@ -24,6 +24,10 @@ describe("Inhalte unter content/", () => {
     expect(repo.getAlleAuftraggeber().map((k) => k.name)).toEqual(["InstaServe", "Iris", "Pan Oston", "Retec", "Rowius"]);
     expect(repo.getAuftraggeber("lidl")).toBeUndefined();
     expect(repo.getAuftraggeber("pan-oston")?.kunden.find((b) => b.id === "lidl")?.ankunft?.checkliste).toHaveLength(3);
+    // Rowius: feste Reihenfolge, sonst alphabetisch
+    const penny = repo.getAuftraggeber("rowius")?.kunden.find((k) => k.id === "penny");
+    expect(penny?.systeme.map((s) => s.name)).toEqual(["NEO", "WEO", "TBA", "Phase 1", "Phase 2", "Phase 3"]);
+    expect(repo.getAuftraggeber("iris")?.kunden.map((k) => k.name)).toEqual(["Qiox", "Smyths Toys"]);
     const pfad = { auftraggeber: "pan-oston", kunde: "lidl", system: "zigarettentraeger", variante: "nera" };
     const nera = repo.getVariante(pfad);
     expect(nera?.hersteller).toBe("nera");

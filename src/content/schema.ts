@@ -217,6 +217,8 @@ export const KundeDateiSchema = z.strictObject({
 export const SystemDateiSchema = z.strictObject({
   name: z.string().min(1),
   beschreibung: z.string().optional(),
+  /** Feste Position in der Liste (1, 2, 3 …). Ohne Angabe: alphabetisch nach den sortierten. */
+  reihenfolge: z.number().int().positive().optional(),
 });
 
 export const FehlerbildSchema = z.strictObject({
@@ -231,8 +233,11 @@ export const FehlerbildSchema = z.strictObject({
 export type Fehlerbild = z.infer<typeof FehlerbildSchema>;
 
 export const VarianteDateiSchema = z.strictObject({
-  /** Verweis auf content/hersteller.yaml */
-  hersteller: IdSchema,
+  /**
+   * Verweis auf content/hersteller.yaml. Weglassen bei Systemen ohne Herstellerauswahl –
+   * dann genau eine Variante (Ordner „standard“), die App öffnet sie direkt am System.
+   */
+  hersteller: IdSchema.optional(),
   /** Anzeigename, falls abweichend vom Hersteller – z. B. „Kesseböhmer Alt“ / „Kesseböhmer Neu“. */
   name: z.string().min(1).optional(),
   status: StatusSchema,

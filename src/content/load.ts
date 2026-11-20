@@ -136,6 +136,8 @@ export function loadContent(contentDir: string): LadeErgebnis {
           .filter((v): v is Variante => v !== null);
         if (system) systeme.push({ ...system, id: systemId, varianten });
       }
+      // Systeme mit „reihenfolge“ zuerst (aufsteigend), danach alphabetisch
+      systeme.sort((a, b) => (a.reihenfolge ?? Infinity) - (b.reihenfolge ?? Infinity) || a.id.localeCompare(b.id));
       if (kunde) kunden.push({ ...kunde, id: kundeId, systeme });
     }
     if (auftraggeber) alleAuftraggeber.push({ ...auftraggeber, id: auftraggeberId, kunden });
